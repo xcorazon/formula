@@ -87,14 +87,56 @@ struct eq_leaf *eq_leaf_clone(struct eq_leaf *leaf)
 }
 
 /*
- * Function return pointer for one of clone functions
+ * Function returns pointer for one of clone functions
  */
-void *( *(get_clone_func(void *equation)))(void *eq)
+void *(*(get_clone_func(void *equation)))(void *eq)
 {
   if(((struct eq_node *)equation)->type == EQ_SYMBOL || ((struct eq_node *)equation)->type == EQ_NUMBER)
     return (void *((*)(void *)))eq_leaf_clone;
   else
     return (void *((*)(void *)))eq_node_clone;
+}
+
+/*
+ * Delete equation node and free memory.
+ * Returns pointer to "next" sibling.
+ */
+void *eq_node_delete(struct eq_node *node)
+{
+  void *next = node->next;
+  void *(*delete)(void *);
+  void *child = node->first_child;
+  
+  while(child != NULL) {
+    delete = get_delete_func(child);
+    child = delete(child);
+  }
+  free(node);
+  
+  return next;
+}
+
+/*
+ * Delete equation leaf and free memory.
+ * Returns pointer to "next" sibling.
+ */
+void *eq_leaf_delete(struct eq_leaf *leaf)
+{
+  void *next = leaf->next;
+  free(leaf->value);
+  free(leaf);
+  return next;
+}
+
+/*
+ * Function returns pointer for one of delete functions
+ */
+void *(*(get_delete_func(void *equation)))(void *)
+{
+  if(((struct eq_node *)equation)->type == EQ_SYMBOL || ((struct eq_node *)equation)->type == EQ_NUMBER)
+    return (void *((*)(void *)))eq_leaf_delete;
+  else
+    return (void *((*)(void *)))eq_node_delete;
 }
 
 /* 
