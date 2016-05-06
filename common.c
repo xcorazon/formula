@@ -1,8 +1,11 @@
-#include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
 #include "eqtypes.h"
 #include "common.h"
+
+
+#define true  1
+#define false 0
 
 
 /*
@@ -45,26 +48,77 @@ struct eq_leaf *eq_leaf_new(unsigned char type, char sign, char *value)
   return leaf;
 }
 
+/*
+ * Clone node with children
+ */
+struct eq_node *eq_node_clone(struct eq_node *node)
+{
+  struct eq_node *clone = eq_node_new(node->type, node->sign);
+  void *child = node->first_child;
+  void *copy = NULL;
+  void *(*eq_clone)(void *);
+  
+  if(child == NULL)
+    return clone;
+  
+  eq_clone = get_clone_func(node->first_child);
+  clone->first_child = eq_clone(node->first_child);
+  copy = clone->first_child;
+  
+  while(((struct eq_node *)child)->next != NULL) {
+    eq_clone = get_clone_func(((struct eq_node *)child)->next);
+    
+    ((struct eq_node *)copy)->next = eq_clone(((struct eq_node *)child)->next);
+    
+    copy  = ((struct eq_node *)copy)->next;
+    child = ((struct eq_node *)child)->next;
+  }
+  
+  return clone;
+}
+
+/*
+ * Clone leaf
+ */
+struct eq_leaf *eq_leaf_clone(struct eq_leaf *leaf)
+{
+  struct eq_leaf *clone = eq_leaf_new(leaf->type, leaf->sign, leaf->value);
+  return clone;
+}
+
+/*
+ * Function return pointer for one of clone functions
+ */
+void *( *(get_clone_func(void *equation)))(void *eq)
+{
+  if(((struct eq_node *)equation)->type == EQ_SYMBOL || ((struct eq_node *)equation)->type == EQ_NUMBER)
+    return (void *((*)(void *)))eq_leaf_clone;
+  else
+    return (void *((*)(void *)))eq_node_clone;
+}
+
 /* 
  * Compare two equations. If absolute is true, then sign is consider. 
  */
 int eq_equals(struct eq_node *eq1, struct eq_node *eq2, int absolute)
 {
+  struct eq_node *child1;
+  struct eq_node *child2;
   
   if(eq1->type != eq2->type || (absolute && eq1->sign != eq2->sign))
     return false;
   
   
-  if(eq1->type == MATH_SYMBOL || eq1->type == MATH_NUMBER) {
-    if(strcmp((eq_leaf *)eq1->value, (eq_leaf *)eq2->value) == 0)
+  if(eq1->type == EQ_SYMBOL || eq1->type == EQ_NUMBER) {
+    if(strcmp(((struct eq_leaf *)eq1)->value, ((struct eq_leaf *)eq2)->value) == 0)
       return true;
   } else {
     
     if(eq_children_count(eq1) != eq_children_count(eq2))
       return false;
     
-    struct eq_node *child1 = eq1->first_child;
-    struct eq_node *child2 = eq2->first_child;
+    child1 = (struct eq_node *)eq1->first_child;
+    child2 = (struct eq_node *)eq2->first_child;
     
     while (child1 != NULL){
       if(!eq_equals(child1, child2, true))
