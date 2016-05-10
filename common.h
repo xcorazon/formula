@@ -20,9 +20,13 @@ void *(*(get_clone_func(void *equation)))(void *eq);
  */
 void *eq_node_delete(struct eq_node *node);
 void *eq_leaf_delete(struct eq_leaf *leaf);
+void *eq_delete(void * node);
 void *(*(get_delete_func(void *equation)))(void *);
 
 int eq_equals(struct eq_node *eq1, struct eq_node *eq2, int absolute);
 int eq_children_count(struct eq_node *equation);
+
+void eq_move_children(struct eq_node *node1, struct eq_node *node2);
+void eq_move_sign_in(struct eq_node *node);
 
 #endif /* COMMON_H */

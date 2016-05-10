@@ -125,6 +125,14 @@ void *eq_leaf_delete(struct eq_leaf *leaf)
   return next;
 }
 
+void *eq_delete(void * node)
+{
+  if(((struct eq_node *)node)->type == EQ_SYMBOL || ((struct eq_node *)equation)->type == EQ_NUMBER)
+    return eq_leaf_delete((struct eq_leaf *)node);
+  else
+    return eq_node_delete((struct eq_node *)node);
+}
+
 /*
  * Function returns pointer for one of delete functions
  */
@@ -191,4 +199,40 @@ int eq_children_count(struct eq_node *equation)
   
 ret:
   return count;
+}
+
+/*
+ * Move children from node2 to node1. 
+ */
+void eq_move_children(struct eq_node *node1, struct eq_node *node2)
+{
+  struct eq_node *child = node1->first_child;
+  
+  char sign = node2->sign;
+  while(child != NULL){
+    child = (struct eq_node *)child->next;
+  }
+  
+  if(node2->type == EQ_SUMM) {
+    eq_move_sign_in(node2);
+    child->next = node2->first_child;
+    node2->first_child = NULL;
+  } else {
+    child->next = node2;
+  }
+}
+
+/*
+ * Move sign in the brackets.
+ */
+void eq_move_sign_in(struct eq_node *node)
+{
+  struct eq_node *child = node->first_child;
+  if( node->type == EQ_SUMM) {
+    while(child != NULL) {
+      child->sign *= node->sign;
+      child = (struct eq_node *)child->next;
+    }
+    node->sign = 1;
+  }
 }
