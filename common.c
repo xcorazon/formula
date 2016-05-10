@@ -1,11 +1,8 @@
+#include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
 #include "eqtypes.h"
 #include "common.h"
-
-
-#define true  1
-#define false 0
 
 
 /*
