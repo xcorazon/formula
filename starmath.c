@@ -3,27 +3,24 @@
 #include <string.h>
 #include <stdlib.h>
 
-#define SM_DEFAULT        0x00
-#define SM_ROUND_BRACKET  0x01
-#define SM_SHOW_SIGN     (0x01 << 1)
 
 static void (* to_string[])(struct eq_node *node, int flags, char *result) = {
       NULL,
       sm_symbol, 
       sm_number,
       sm_summ
-      }
+      };
 
 void sm_symbol(struct eq_node *node, int flags, char *result)
 {
   char *sign = "";
-  if(flags & SM_SHOW_SIGN != 0)
+  if((flags & SM_SHOW_SIGN) != 0)
     sign = "+";
   if(node->sign < 0)
     sign = "-";
 
   strcpy(result, sign);
-  strcat(result, ((eq_leaf *)node)->value);
+  strcat(result, ((struct eq_leaf *)node)->value);
 }
 
 void sm_number(struct eq_node *node, int flags, char *result)
@@ -37,7 +34,7 @@ void sm_summ(struct eq_node *node, int flags, char *result)
   char *open_bracket = "{";
   char *close_bracket = "}";
   char *sign = "";
-  if(flags & SM_SHOW_SIGN != 0)
+  if((flags & SM_SHOW_SIGN) != 0)
     sign = "+";
   if(node->sign < 0)
     sign = "-";
@@ -51,7 +48,7 @@ void sm_summ(struct eq_node *node, int flags, char *result)
   int ts_flags = SM_DEFAULT;
   struct eq_node *child = (struct eq_node *)node->first_child;
   while(child != NULL) {
-    to_string[node->type]((struct eq_node *)node->first_child, ts_flags, tmp);
+    to_string[child->type]((struct eq_node *)child, ts_flags, tmp);
     strcat(result, tmp);
     ts_flags = SM_SHOW_SIGN;
     child = (struct eq_node *)child->next;

@@ -127,7 +127,7 @@ void *eq_leaf_delete(struct eq_leaf *leaf)
 
 void *eq_delete(void * node)
 {
-  if(((struct eq_node *)node)->type == EQ_SYMBOL || ((struct eq_node *)equation)->type == EQ_NUMBER)
+  if(((struct eq_node *)node)->type == EQ_SYMBOL || ((struct eq_node *)node)->type == EQ_NUMBER)
     return eq_leaf_delete((struct eq_leaf *)node);
   else
     return eq_node_delete((struct eq_node *)node);
@@ -208,7 +208,6 @@ void eq_move_children(struct eq_node *node1, struct eq_node *node2)
 {
   struct eq_node *child = node1->first_child;
   
-  char sign = node2->sign;
   while(child != NULL){
     child = (struct eq_node *)child->next;
   }
