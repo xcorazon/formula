@@ -40,7 +40,7 @@ struct eq_leaf *eq_leaf_new(unsigned char type, char sign, char *value)
   else
     leaf->sign = -1;
   leaf->next = NULL;
-  leaf->value = str;
+  leaf->name = str;
   
   return leaf;
 }
@@ -79,7 +79,7 @@ struct eq_node *eq_node_clone(struct eq_node *node)
  */
 struct eq_leaf *eq_leaf_clone(struct eq_leaf *leaf)
 {
-  struct eq_leaf *clone = eq_leaf_new(leaf->type, leaf->sign, leaf->value);
+  struct eq_leaf *clone = eq_leaf_new(leaf->type, leaf->sign, leaf->name);
   return clone;
 }
 
@@ -100,6 +100,8 @@ void *(*(get_clone_func(void *equation)))(void *eq)
  */
 void *eq_node_delete(struct eq_node *node)
 {
+  if(node == NULL)
+    return NULL;
   void *next = node->next;
   void *(*delete)(void *);
   void *child = node->first_child;
@@ -109,6 +111,7 @@ void *eq_node_delete(struct eq_node *node)
     child = delete(child);
   }
   free(node);
+  node = NULL;
   
   return next;
 }
@@ -119,14 +122,19 @@ void *eq_node_delete(struct eq_node *node)
  */
 void *eq_leaf_delete(struct eq_leaf *leaf)
 {
+  if(leaf == NULL)
+    return NULL;
   void *next = leaf->next;
-  free(leaf->value);
+  free(leaf->name);
   free(leaf);
+  leaf = NULL;
   return next;
 }
 
 void *eq_delete(void * node)
 {
+  if(node == NULL)
+    return NULL;
   if(((struct eq_node *)node)->type == EQ_SYMBOL || ((struct eq_node *)node)->type == EQ_NUMBER)
     return eq_leaf_delete((struct eq_leaf *)node);
   else
@@ -162,7 +170,7 @@ int eq_equals(struct eq_node *eq1, struct eq_node *eq2, int absolute)
   
   
   if(eq1->type == EQ_SYMBOL || eq1->type == EQ_NUMBER) {
-    if(strcmp(((struct eq_leaf *)eq1)->value, ((struct eq_leaf *)eq2)->value) == 0)
+    if(strcmp(((struct eq_leaf *)eq1)->name, ((struct eq_leaf *)eq2)->name) == 0)
       return true;
   } else {
     
@@ -234,9 +242,8 @@ void eq_move_children(struct eq_node *node1, struct eq_node *node2)
 {
   struct eq_node *child = node1->first_child;
   
-  while(child != NULL){
-    child = (struct eq_node *)child->next;
-  }
+  while(child->next != NULL)
+    child = child->next;
   
   if(node2->type == EQ_SUMM) {
     eq_move_sign_in(node2);

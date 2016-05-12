@@ -12,8 +12,12 @@ OUT_DIR := d:/ForSite/calculation_c/result/
 
 VPATH = $(OUT_DIR)
 
-test.exe : test.o common.o starmath.o
-	$(COMPILER_PATH)$(CC) $(OUT_DIR)test.o $(OUT_DIR)common.o $(OUT_DIR)starmath.o -o $(OUT_DIR)$@
+test.exe : test.o common.o starmath.o summ.o
+	$(COMPILER_PATH)$(CC) $(OUT_DIR)test.o\
+                        $(OUT_DIR)common.o\
+                        $(OUT_DIR)starmath.o\
+                        $(OUT_DIR)summ.o\
+                        -o $(OUT_DIR)$@
 
 #test.exe : test.obj
 #	echo Build test.exe
@@ -25,5 +29,8 @@ common.o: common.c common.h eqtypes.h
 starmath.o: starmath.c starmath.h eqtypes.h
 	$(COMPILER_PATH)$(CC) -c $(CFLAGS) -fdata-sections -ffunction-sections -o $(OUT_DIR)$@ starmath.c
   
-test.o: test.c
+summ.o: summ.c summ.h eqtypes.h
+	$(COMPILER_PATH)$(CC) -c $(CFLAGS) -fdata-sections -ffunction-sections -o $(OUT_DIR)$@ summ.c
+  
+test.o: test.c common.h eqtypes.h
 	$(COMPILER_PATH)$(CC) -c $(CFLAGS) -fdata-sections -ffunction-sections -o $(OUT_DIR)$@ test.c

@@ -20,7 +20,7 @@ void sm_symbol(struct eq_node *node, int flags, char *result)
     sign = "-";
 
   strcpy(result, sign);
-  strcat(result, ((struct eq_leaf *)node)->value);
+  strcat(result, ((struct eq_leaf *)node)->name);
 }
 
 void sm_number(struct eq_node *node, int flags, char *result)

@@ -15,6 +15,7 @@ struct eq_node {
     unsigned char type;
     char sign;
     void *next;
+    
     void *first_child;
 };
 
@@ -23,7 +24,12 @@ struct eq_leaf {
     unsigned char type;
     char sign;
     void *next;
-    char *value;
+    
+    union {
+      char *name;
+      double value;
+    };
+    unsigned char priority;
 };
 
 #endif /* EQ_TYPES_H */
