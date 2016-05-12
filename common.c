@@ -152,6 +152,11 @@ int eq_equals(struct eq_node *eq1, struct eq_node *eq2, int absolute)
   struct eq_node *child1;
   struct eq_node *child2;
   
+  void *children[100];
+  for(int i=0; i<100; i++)
+    children[i] = NULL;
+  int next_child = 0;
+  
   if(eq1->type != eq2->type || (absolute && eq1->sign != eq2->sign))
     return false;
   
@@ -165,13 +170,34 @@ int eq_equals(struct eq_node *eq1, struct eq_node *eq2, int absolute)
       return false;
     
     child1 = (struct eq_node *)eq1->first_child;
-    child2 = (struct eq_node *)eq2->first_child;
     
-    while (child1 != NULL){
-      if(!eq_equals(child1, child2, true))
+    while (child1 != NULL) {
+      int match_finded = false;
+      child2 = (struct eq_node *)eq2->first_child;
+      
+      while(child2 != NULL) {
+        
+        int child_in_array = false;
+        for(int i=0; i<next_child; i++) {
+          if(children[i] == child2) {
+            child_in_array = true;
+            break;
+          }
+        }
+        
+        if(!child_in_array && eq_equals(child1, child2, true)) {
+          children[next_child] = child2;
+          next_child++;
+          match_finded = true;
+          break;
+        }
+        child2 = child2->next;
+      }
+      
+      if(!match_finded)
         return false;
+      
       child1 = child1->next;
-      child2 = child2->next;
     }
     return true;
   }
