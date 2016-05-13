@@ -83,12 +83,17 @@ struct eq_leaf *eq_leaf_clone(struct eq_leaf *leaf)
   return clone;
 }
 
+inline int eq_is_leaf(struct eq_node *node)
+{
+  return (node->type == EQ_SYMBOL || node->type == EQ_NUMBER);
+}
+
 /*
  * Function returns pointer for one of clone functions
  */
 void *(*(get_clone_func(void *equation)))(void *eq)
 {
-  if(((struct eq_node *)equation)->type == EQ_SYMBOL || ((struct eq_node *)equation)->type == EQ_NUMBER)
+  if(eq_is_leaf(equation))
     return (void *((*)(void *)))eq_leaf_clone;
   else
     return (void *((*)(void *)))eq_node_clone;
@@ -134,7 +139,7 @@ void *eq_delete(void * node)
 {
   if(node == NULL)
     return NULL;
-  if(((struct eq_node *)node)->type == EQ_SYMBOL || ((struct eq_node *)node)->type == EQ_NUMBER)
+  if(eq_is_leaf(node))
     return eq_leaf_delete((struct eq_leaf *)node);
   else
     return eq_node_delete((struct eq_node *)node);
@@ -145,7 +150,7 @@ void *eq_delete(void * node)
  */
 void *(*(get_delete_func(void *equation)))(void *)
 {
-  if(((struct eq_node *)equation)->type == EQ_SYMBOL || ((struct eq_node *)equation)->type == EQ_NUMBER)
+  if(eq_is_leaf(equation))
     return (void *((*)(void *)))eq_leaf_delete;
   else
     return (void *((*)(void *)))eq_node_delete;
@@ -168,7 +173,7 @@ int eq_equals(struct eq_node *eq1, struct eq_node *eq2, int absolute)
     return false;
   
   
-  if(eq1->type == EQ_SYMBOL || eq1->type == EQ_NUMBER) {
+  if(eq_is_leaf(eq1)) {
     if(strcmp(((struct eq_leaf *)eq1)->name, ((struct eq_leaf *)eq2)->name) == 0)
       return true;
   } else {
@@ -266,4 +271,55 @@ void eq_move_sign_in(struct eq_node *node)
     }
     node->sign = 1;
   }
+}
+
+/*
+ * Find equation.
+ */
+void *eq_find(struct eq_node *node, struct eq_node *equation)
+{
+  if(eq_is_leaf(node))
+    goto ret;
+  
+  struct eq_node *child = node->first_child;
+  while(child != NULL) {
+    if(child->type == EQ_MUL) {
+      if(eq_find(child, equation) != NULL)
+        return child;
+    }
+    if(eq_equals(node, equation, false)) 
+      return child;
+  }
+ret:
+  return NULL;
+}
+
+/*
+ * Find common multiplier.
+ */
+void *eq_find_common_mul(struct eq_node *node)
+{
+  if(node->type != EQ_SUMM)
+    goto ret;
+  
+  struct eq_node *child = node->first_child;
+  struct eq_node *current = child->next;
+  struct eq_node *result;
+  
+  while(child->next != NULL) {
+    if(child->type == EQ_MUL)
+      result = child->first_child;
+    else
+      result = child;
+    
+    while(current != NULL) {
+      if(eq_equals(result, current, false) || (current->type == EQ_MUL && eq_find(current, result) != NULL))
+        return result;
+      current = current->next;
+    }
+    child   = child->next;
+    current = child->next;
+  }
+ret:
+  return NULL;
 }

@@ -2,7 +2,7 @@ SYSROOT := d:/Soft/MinGW/
 INCLUDE_PATH := d:/Soft/MinGW/include/
 COMPILER_PATH := d:/Soft/MinGW/bin/
 
-CFLAGS := -std=c99 -g -Wall -I$(INCLUDE_PATH) -B$(COMPILER_PATH)
+CFLAGS := -std=c99 -g -Wall -O2 -I$(INCLUDE_PATH) -B$(COMPILER_PATH)
 
 CC := gcc.exe
 
