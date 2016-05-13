@@ -111,7 +111,6 @@ void *eq_node_delete(struct eq_node *node)
     child = delete(child);
   }
   free(node);
-  node = NULL;
   
   return next;
 }
@@ -127,7 +126,7 @@ void *eq_leaf_delete(struct eq_leaf *leaf)
   void *next = leaf->next;
   free(leaf->name);
   free(leaf);
-  leaf = NULL;
+
   return next;
 }
 
