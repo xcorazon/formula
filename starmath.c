@@ -2,6 +2,7 @@
 #include "starmath.h"
 #include <string.h>
 #include <stdlib.h>
+#include <math.h>
 
 
 static void (* to_string[])(struct eq_node *node, int flags, char *result) = {
@@ -25,7 +26,20 @@ void sm_symbol(struct eq_node *node, int flags, char *result)
 
 void sm_number(struct eq_node *node, int flags, char *result)
 {
-  sm_symbol(node, flags, result);
+  char *sign = "";
+  char tmp[20];
+  
+  if((flags & SM_SHOW_SIGN) != 0)
+    sign = "+";
+  if(node->sign < 0)
+    sign = "-";
+  
+  strcpy(result, sign);
+  snprintf(tmp, 19, "%.2f", ((struct eq_leaf *)node)->value);
+  char *pos = strstr(tmp, ".00");
+  if(pos != NULL)
+    *pos = '\0';
+  strcat(result, tmp);
 }
 
 void sm_summ(struct eq_node *node, int flags, char *result)

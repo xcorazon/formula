@@ -27,12 +27,21 @@ struct eq_node *eq_node_new(unsigned char type, char sign)
 /*
  * Creates Number or Symbol
  */
-struct eq_leaf *eq_leaf_new(unsigned char type, char sign, char *value)
+struct eq_leaf *eq_leaf_new(unsigned char type, char sign, char *name, double val)
 {
-  struct eq_leaf *leaf = (struct eq_leaf *)malloc(sizeof(*leaf));
-  char *str = (char *)malloc(strlen(value) + 1);
+  if(type != EQ_SYMBOL && type != EQ_NUMBER)
+    return NULL;
   
-  strcpy(str, value);
+  struct eq_leaf *leaf = (struct eq_leaf *)malloc(sizeof(*leaf));
+  if(type == EQ_SYMBOL) {
+    char *str = (char *)malloc(strlen(name) + 1);
+  
+    strcpy(str, name);
+    leaf->name = str;
+  } else {
+    leaf->value = val;
+    leaf->name = NULL;
+  }
   
   leaf->type = type;
   if(sign >= 0)
@@ -40,7 +49,6 @@ struct eq_leaf *eq_leaf_new(unsigned char type, char sign, char *value)
   else
     leaf->sign = -1;
   leaf->next = NULL;
-  leaf->name = str;
   
   return leaf;
 }
@@ -79,7 +87,7 @@ struct eq_node *eq_node_clone(struct eq_node *node)
  */
 struct eq_leaf *eq_leaf_clone(struct eq_leaf *leaf)
 {
-  struct eq_leaf *clone = eq_leaf_new(leaf->type, leaf->sign, leaf->name);
+  struct eq_leaf *clone = eq_leaf_new(leaf->type, leaf->sign, leaf->name, leaf->value);
   return clone;
 }
 
@@ -129,7 +137,8 @@ void *eq_leaf_delete(struct eq_leaf *leaf)
   if(leaf == NULL)
     return NULL;
   void *next = leaf->next;
-  free(leaf->name);
+  if(leaf->type == EQ_SYMBOL)
+    free(leaf->name);
   free(leaf);
 
   return next;
@@ -174,7 +183,10 @@ int eq_equals(struct eq_node *eq1, struct eq_node *eq2, int absolute)
   
   
   if(eq_is_leaf(eq1)) {
-    if(strcmp(((struct eq_leaf *)eq1)->name, ((struct eq_leaf *)eq2)->name) == 0)
+    
+    if(eq1->type == EQ_NUMBER && ((struct eq_leaf *)eq1)->value == ((struct eq_leaf *)eq2)->value)
+      return true;
+    else if(strcmp(((struct eq_leaf *)eq1)->name, ((struct eq_leaf *)eq2)->name) == 0)
       return true;
   } else {
     
