@@ -107,6 +107,14 @@ void *(*(get_clone_func(void *equation)))(void *eq)
     return (void *((*)(void *)))eq_node_clone;
 }
 
+void *eq_clone(void * node)
+{
+  if(eq_is_leaf(node))
+    return eq_leaf_clone(node);
+  else
+    return eq_node_clone(node);
+}
+
 /*
  * Delete equation node and free memory.
  * Returns pointer to "next" sibling.
@@ -282,6 +290,25 @@ void eq_move_sign_in(struct eq_node *node)
       child = (struct eq_node *)child->next;
     }
     node->sign = 1;
+  }
+}
+
+/*
+ * Removes one equal child from node
+ */
+void eq_remove_child(struct eq_node *node, struct eq_node *rem)
+{
+  struct eq_node *child = node->first_child;
+  struct eq_node **prev = (struct eq_node **)&node->first_child;
+  
+  while(child != NULL) {
+    if(eq_equals(child, rem, false)) {
+      *prev = child->next;
+      if(node->type == EQ_MUL)
+        node->sign *= child->sign * rem->sign;
+      eq_delete(child);
+      break;
+    }
   }
 }
 

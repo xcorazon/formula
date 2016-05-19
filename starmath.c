@@ -9,7 +9,8 @@ static void (* to_string[])(struct eq_node *node, int flags, char *result) = {
       NULL,
       sm_symbol, 
       sm_number,
-      sm_summ
+      sm_summ,
+      sm_mul
       };
 
 void sm_symbol(struct eq_node *node, int flags, char *result)
@@ -68,6 +69,39 @@ void sm_summ(struct eq_node *node, int flags, char *result)
     child = (struct eq_node *)child->next;
   }
   
+  strcat(result, close_bracket);
+}
+
+void sm_mul(struct eq_node *node, int flags, char *result)
+{
+  char tmp[1000];
+   char *open_bracket = "{";
+  char *close_bracket = "}";
+  struct eq_node *child = node->first_child;
+  
+  char s = node->sign;
+  char *sign = "";
+  while(child != NULL) {
+    s *= child->sign;
+    child = child->next;
+  }
+  if(s < 0)
+    sign = "-";
+  else if ((flags & SM_SHOW_SIGN) != 0)
+    sign = "+";
+  
+  strcpy(result, sign);
+  strcat(result, open_bracket);
+  
+  int ts_flags = SM_ROUND_BRACKET;
+  child = (struct eq_node *)node->first_child;
+  while(child != NULL) {
+    to_string[child->type]((struct eq_node *)child, ts_flags, tmp);
+    strcat(result, tmp);
+    child = child->next;
+    if(child != NULL)
+      strcat(result, " cdot ");
+  }
   strcat(result, close_bracket);
 }
 

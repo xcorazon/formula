@@ -9,6 +9,7 @@
 void sm_symbol(struct eq_node *node, int flags, char *result);
 void sm_number(struct eq_node *node, int flags, char *result);
 void sm_summ(struct eq_node *node, int flags, char *result);
+void sm_mul(struct eq_node *node, int flags, char *result);
 
 void sm_to_string(struct eq_node *node, int flags, char *result);
 

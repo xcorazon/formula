@@ -11,24 +11,11 @@ struct eq_node *eq_add(void **node1, void **node2)
 {
   struct eq_node *summ;
   
-  if(((struct eq_node *)(*node1))->type == EQ_SUMM) {
-    summ = *node1;
-    eq_move_children(summ, (struct eq_node *)(*node2));
-    eq_delete(*node2);
-    *node2 = NULL;
-  }
-  else if(((struct eq_node *)(*node2))->type == EQ_SUMM) {
-    summ = *node2;
-    eq_move_children(summ, (struct eq_node *)(*node1));
-    eq_delete(*node1);
-    *node1 = NULL;
-  }
-  else {
-    summ = eq_node_new(EQ_SUMM, 1);
-    summ->first_child = *node1;
-    ((struct eq_node *)(*node1))->next = *node2;
-  }
-  
+  summ = eq_node_new(EQ_SUMM, 1);
+  summ->first_child = *node1;
+  ((struct eq_node *)(*node1))->next = *node2;
+  eq_combine_summ(summ);
+
   return summ;
 }
 
@@ -64,4 +51,35 @@ void eq_combine_summ(struct eq_node *node)
       child = child->next;
     }
   }
+}
+
+/*
+ * Calculate summ. Node type must be EQ_SUMM
+ */
+void eq_calculate_summ(struct eq_node *node)
+{
+  struct eq_leaf *num = node->first_child;
+  struct eq_leaf *leaf;
+  struct eq_leaf **prev;
+  
+  while(num != NULL && num->type != EQ_NUMBER)
+    num = num->next;
+  
+  if (num == NULL)
+    goto ret;
+  
+  prev = (struct eq_leaf **)&num->next;
+  leaf = num->next;
+  while(leaf != NULL) {
+    if(leaf->type == EQ_NUMBER) {
+      num->value += leaf->value;
+      *prev = leaf->next;
+      eq_delete(leaf);
+    } else 
+      prev = (struct eq_leaf **)&leaf->next;
+    
+    leaf = *prev;
+  }
+ret:
+  return;
 }
