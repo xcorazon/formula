@@ -13,12 +13,13 @@ OUT_DIR := d:/ForSite/calculation_c/result/
 
 VPATH = $(OUT_DIR)
 
-test.exe : test.o common.o starmath.o summ.o mul.o
+test.exe : test.o common.o starmath.o summ.o mul.o transform.o
 	$(CC) $(OUT_DIR)test.o\
                   $(OUT_DIR)common.o\
                   $(OUT_DIR)starmath.o\
                   $(OUT_DIR)summ.o\
                   $(OUT_DIR)mul.o\
+                  $(OUT_DIR)transform.o\
                   -o $(OUT_DIR)$@
 
 #test.exe : test.obj
@@ -36,6 +37,9 @@ summ.o: summ.c summ.h eqtypes.h
   
 mul.o: mul.c mul.h eqtypes.h common.h
 	$(CC) -c $(CFLAGS) -fdata-sections -ffunction-sections -o $(OUT_DIR)$@ mul.c
+
+transform.o: transform.c transform.c mul.h summ.h eqtypes.h common.h
+	$(CC) -c $(CFLAGS) -fdata-sections -ffunction-sections -o $(OUT_DIR)$@ transform.c
   
 test.o: test.c common.h eqtypes.h
 	$(CC) -c $(CFLAGS) -fdata-sections -ffunction-sections -o $(OUT_DIR)$@ test.c

@@ -91,9 +91,9 @@ struct eq_leaf *eq_leaf_clone(struct eq_leaf *leaf)
   return clone;
 }
 
-inline int eq_is_leaf(struct eq_node *node)
+inline int eq_is_leaf(void *node)
 {
-  return (node->type == EQ_SYMBOL || node->type == EQ_NUMBER);
+  return (((struct eq_node *)node)->type == EQ_SYMBOL || ((struct eq_node *)node)->type == EQ_NUMBER);
 }
 
 /*
@@ -265,12 +265,18 @@ ret:
 void eq_move_children(struct eq_node *node1, struct eq_node *node2)
 {
   struct eq_node *child = node1->first_child;
+  if(child == NULL)
+    return;
   
   while(child->next != NULL)
     child = child->next;
   
   if(node2->type == EQ_SUMM) {
     eq_move_sign_in(node2);
+    child->next = node2->first_child;
+    node2->first_child = NULL;
+  } else if(node2->type == EQ_MUL) {
+    ((struct eq_node *)node2->first_child)->sign *= node2->sign;
     child->next = node2->first_child;
     node2->first_child = NULL;
   } else {

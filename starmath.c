@@ -1,8 +1,9 @@
-#include "eqtypes.h"
-#include "starmath.h"
+#include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#include "eqtypes.h"
+#include "starmath.h"
 
 
 static void (* to_string[])(struct eq_node *node, int flags, char *result) = {

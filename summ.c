@@ -1,8 +1,9 @@
+#include <stdlib.h>
+#include <stdbool.h>
+#include <math.h>
 #include "eqtypes.h"
 #include "common.h"
 #include "summ.h"
-#include <stdlib.h>
-#include <stdbool.h>
 
 /*
  * Add to node another node.
@@ -56,11 +57,20 @@ void eq_combine_summ(struct eq_node *node)
 /*
  * Calculate summ. Node type must be EQ_SUMM
  */
-void eq_calculate_summ(struct eq_node *node)
+void eq_calculate_summ(struct eq_node *node, void (*calculate)(void *))
 {
   struct eq_leaf *num = node->first_child;
   struct eq_leaf *leaf;
   struct eq_leaf **prev;
+  
+  if(calculate != NULL) {
+    while(num != NULL) {
+      calculate(num);
+      num = num->next;
+    }
+  }
+  
+  num = node->first_child;
   
   while(num != NULL && num->type != EQ_NUMBER)
     num = num->next;
@@ -70,9 +80,10 @@ void eq_calculate_summ(struct eq_node *node)
   
   prev = (struct eq_leaf **)&num->next;
   leaf = num->next;
+  double val = num->value * num->sign;
   while(leaf != NULL) {
     if(leaf->type == EQ_NUMBER) {
-      num->value += leaf->value;
+      val += leaf->value * leaf->sign;
       *prev = leaf->next;
       eq_delete(leaf);
     } else 
@@ -80,6 +91,10 @@ void eq_calculate_summ(struct eq_node *node)
     
     leaf = *prev;
   }
+  num->value = fabs(val);
+  num->sign = 1;
+  if(val < 0)
+    num->sign = -1;
 ret:
   return;
 }

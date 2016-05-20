@@ -14,7 +14,7 @@ struct eq_leaf *eq_leaf_new(unsigned char type, char sign, char *name, double va
 struct eq_node *eq_node_clone(struct eq_node *node);
 struct eq_leaf *eq_leaf_clone(struct eq_leaf *leaf);
 
-int eq_is_leaf(struct eq_node *node);
+int eq_is_leaf(void *node);
 
 void *(*(get_clone_func(void *equation)))(void *eq);
 void *eq_clone(void * node);
