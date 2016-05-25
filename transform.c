@@ -43,7 +43,24 @@ void eq_transform(void **node)
     goto ret;
   
   transform[((struct eq_node *)*node)->type](node, eq_transform);
+  if(!eq_is_leaf(*node))
+    eq_transform_children((struct eq_node *)*node, eq_transform);
   
 ret:
   return;
+}
+
+void eq_transform_children(struct eq_node *node, void (*transform)(void **))
+{
+  void **prev;
+  struct eq_node *child;
+  if(transform != NULL) {
+    child = node->first_child;
+    prev = &node->first_child;
+    while(child != NULL) {
+      transform(prev);
+      prev = &child->next;
+      child = child->next;
+    }
+  }
 }

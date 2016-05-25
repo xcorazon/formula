@@ -114,19 +114,12 @@ void eq_transform_summ(void **summ, void (*transform)(void **))
   if(eq_children_count(*summ) == 1) {
     void *res = ((struct eq_node *)(*summ))->first_child;
     ((struct eq_node *)(*summ))->first_child = NULL;
-    eq_delete(*summ);
+    ((struct eq_node *)res)->next = eq_delete(*summ);
     *summ = res;
     goto ret;
   } else 
     eq_combine_summ(*summ);
   
-  if(transform != NULL) {
-    child = ((struct eq_node *)(*summ))->first_child;
-    while(child != NULL) {
-      transform((void **)&child);
-      child = child->next;
-    }
-  }
 ret:
   return;
 }
