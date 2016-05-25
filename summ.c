@@ -98,3 +98,35 @@ void eq_calculate_summ(struct eq_node *node, void (*calculate)(void *))
 ret:
   return;
 }
+
+/*
+ * Transform summ.
+ */
+void eq_transform_summ(void **summ, void (*transform)(void **))
+{
+  struct eq_node *child = ((struct eq_node *)(*summ))->first_child;
+  if(child == NULL) {
+    eq_delete(*summ);
+    *summ = eq_leaf_new(EQ_NUMBER, 1, "", 0);
+    goto ret;
+  }
+  
+  if(eq_children_count(*summ) == 1) {
+    void *res = ((struct eq_node *)(*summ))->first_child;
+    ((struct eq_node *)(*summ))->first_child = NULL;
+    eq_delete(*summ);
+    *summ = res;
+    goto ret;
+  } else 
+    eq_combine_summ(*summ);
+  
+  if(transform != NULL) {
+    child = ((struct eq_node *)(*summ))->first_child;
+    while(child != NULL) {
+      transform((void **)&child);
+      child = child->next;
+    }
+  }
+ret:
+  return;
+}
