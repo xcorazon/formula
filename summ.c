@@ -28,6 +28,9 @@ void eq_combine_summ(struct eq_node *node)
   if(node == NULL || node->type == EQ_SYMBOL || node->type == EQ_NUMBER)
     return;
   
+  if(eq_children_count(node) == 0)
+    return;
+  
   struct eq_node *child = node->first_child;
   struct eq_node **prev = (struct eq_node **)(&node->first_child);
   
@@ -46,9 +49,10 @@ void eq_combine_summ(struct eq_node *node)
         *prev = child->next;
         eq_delete(child);
         child = *prev;
-      } else
-        prev = (struct eq_node **)&child->next;
-      
+        continue;
+      }
+
+      prev = (struct eq_node **)&child->next;
       child = child->next;
     }
   }
@@ -106,8 +110,9 @@ void eq_transform_summ(void **summ, void (*transform)(void **))
 {
   struct eq_node *child = ((struct eq_node *)(*summ))->first_child;
   if(child == NULL) {
-    eq_delete(*summ);
+    void *next = eq_delete(*summ);
     *summ = eq_leaf_new(EQ_NUMBER, 1, "", 0);
+    (*(struct eq_node **)summ)->next = next; 
     goto ret;
   }
   

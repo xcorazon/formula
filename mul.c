@@ -53,6 +53,7 @@ void eq_move_multiplier_out(struct eq_node **node, struct eq_node *multiplier)
       if(tmp != NULL) {
         eq_remove_child(child, mul_clone);
         *prev = child->next;
+        child->next = NULL;
         summ = eq_add(&summ, (void **)&child);
         child = *prev;
         continue;
@@ -75,6 +76,9 @@ ret:
 void eq_combine_mul(struct eq_node *node)
 {
   if(node == NULL || node->type == EQ_SYMBOL || node->type == EQ_NUMBER)
+    return;
+  
+  if(eq_children_count(node) == 0)
     return;
   
   struct eq_node *child = node->first_child;
@@ -141,6 +145,29 @@ void eq_calculate_mul(struct eq_node *node, void (*calculate)(void *))
   if(num->value < 0)
     num->sign = -1;
   num->value = fabs(num->value);
+ret:
+  return;
+}
+
+
+void eq_transform_mul(void **mul, void (*transform)(void **))
+{
+   struct eq_node *child = ((struct eq_node *)(*mul))->first_child;
+  if(child == NULL) {
+    void *next = eq_delete(*mul);;
+    *mul = eq_leaf_new(EQ_NUMBER, (*(struct eq_node **)mul)->sign, "", 1);
+    (*(struct eq_leaf **)mul)->next = next;
+    goto ret;
+  }
+  if(eq_children_count(*mul) == 1) {
+    void *res = ((struct eq_node *)(*mul))->first_child;
+    ((struct eq_node *)(*mul))->first_child = NULL;
+    ((struct eq_node *)res)->next = eq_delete(*mul);
+    *mul = res;
+    goto ret;
+  } else 
+    eq_combine_mul(*mul);
+  
 ret:
   return;
 }

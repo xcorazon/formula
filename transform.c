@@ -21,8 +21,7 @@ static void (* transform[])(void **node, void (*)(void **)) = {
                 transform_nothing,
                 transform_nothing,
                 eq_transform_summ,
-                transform_nothing/*,
-                eq_transform_mul*/
+                eq_transform_mul
                 };
                 
 

@@ -309,12 +309,13 @@ void eq_remove_child(struct eq_node *node, struct eq_node *rem)
   
   while(child != NULL) {
     if(eq_equals(child, rem, false)) {
-      *prev = child->next;
       if(node->type == EQ_MUL)
         node->sign *= child->sign * rem->sign;
-      eq_delete(child);
+      *prev = eq_delete(child);
       break;
     }
+    prev = (struct eq_node **)&child->next;
+    child = child->next;
   }
 }
 
@@ -332,8 +333,9 @@ void *eq_find(struct eq_node *node, struct eq_node *equation)
       if(eq_find(child, equation) != NULL)
         return child;
     }
-    if(eq_equals(node, equation, false)) 
+    if(eq_equals(child, equation, false)) 
       return child;
+    child = child->next;
   }
 ret:
   return NULL;
