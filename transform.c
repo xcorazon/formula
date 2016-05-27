@@ -58,8 +58,8 @@ void eq_transform_children(struct eq_node *node, void (*transform)(void **))
     prev = &node->first_child;
     while(child != NULL) {
       transform(prev);
-      prev = &child->next;
-      child = child->next;
+      prev = &(*(struct eq_node **)prev)->next;
+      child = *prev;
     }
   }
 }

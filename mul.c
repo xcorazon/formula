@@ -71,7 +71,7 @@ ret:
 }
 
 /*
- * If one of children is summ - his children moves to current node.
+ * If one of children is mul - his children moves to current node.
  */
 void eq_combine_mul(struct eq_node *node)
 {
@@ -99,9 +99,10 @@ void eq_combine_mul(struct eq_node *node)
         *prev = child->next;
         eq_delete(child);
         child = *prev;
-      } else
-        prev = (struct eq_node **)&child->next;
+        continue;
+      }
       
+      prev = (struct eq_node **)&child->next;
       child = child->next;
     }
   }
@@ -152,13 +153,14 @@ ret:
 
 void eq_transform_mul(void **mul, void (*transform)(void **))
 {
-   struct eq_node *child = ((struct eq_node *)(*mul))->first_child;
+  struct eq_node *child = ((struct eq_node *)(*mul))->first_child;
   if(child == NULL) {
     void *next = eq_delete(*mul);;
     *mul = eq_leaf_new(EQ_NUMBER, (*(struct eq_node **)mul)->sign, "", 1);
     (*(struct eq_leaf **)mul)->next = next;
     goto ret;
   }
+  
   if(eq_children_count(*mul) == 1) {
     void *res = ((struct eq_node *)(*mul))->first_child;
     ((struct eq_node *)(*mul))->first_child = NULL;
@@ -167,6 +169,13 @@ void eq_transform_mul(void **mul, void (*transform)(void **))
     goto ret;
   } else 
     eq_combine_mul(*mul);
+  
+  child = (*(struct eq_node **)mul)->first_child;
+  while(child != NULL) {
+    (*(struct eq_node **)mul)->sign *= child->sign;
+    child->sign = 1;
+    child = child->next;
+  }
   
 ret:
   return;
