@@ -219,17 +219,25 @@ void eq_transform_mul(void **mul, void (*transform)(void **))
   if(eq_children_count(*mul) == 1) {
     void *res = ((struct eq_node *)(*mul))->first_child;
     ((struct eq_node *)(*mul))->first_child = NULL;
+    ((struct eq_node *)res)->sign *= ((struct eq_node *)(*mul))->sign;
     ((struct eq_node *)res)->next = eq_delete(*mul);
     *mul = res;
     goto ret;
   } else 
     eq_combine_mul(*mul);
   
-  child = (*(struct eq_node **)mul)->first_child;
+  child = ((struct eq_node *)(*mul))->first_child;
+  void **prev = &((struct eq_node *)(*mul))->first_child;
   while(child != NULL) {
     (*(struct eq_node **)mul)->sign *= child->sign;
     child->sign = 1;
-    child = child->next;
+    
+    if(child->type == EQ_NUMBER && ((struct eq_leaf *)child)->value == 1)
+      *prev = eq_delete(child);
+    else
+      prev = &child->next;
+    
+    child =*prev;
   }
   
   // if find zero - delete mul and change it to 0.
