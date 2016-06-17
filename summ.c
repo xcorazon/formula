@@ -128,3 +128,21 @@ void eq_transform_summ(void **summ, void (*transform)(void **))
 ret:
   return;
 }
+
+/*
+ * Get pointer to first summ number
+ */
+struct eq_leaf *get_summ_number(struct eq_node *summ)
+{
+  if(summ->type != EQ_SUMM)
+    return NULL;
+  
+  struct eq_leaf *child = summ->first_child;
+  while(child != NULL) {
+    if(child->type == EQ_NUMBER)
+      break;
+    child = child->next;
+  }
+  
+  return child;
+}
