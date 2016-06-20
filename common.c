@@ -38,10 +38,9 @@ struct eq_leaf *eq_leaf_new(unsigned char type, char sign, char *name, double va
   
     strcpy(str, name);
     leaf->name = str;
-  } else {
+  } else
     leaf->value = val;
-    leaf->name = NULL;
-  }
+
   
   leaf->type = type;
   if(sign >= 0)
