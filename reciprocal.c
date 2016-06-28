@@ -93,6 +93,7 @@ void eq_calculate_reciprocal(struct eq_node **node, void (*calculate)(void **))
     if(child->type == EQ_NUMBER) {
       child->value = 1 / child->value;
       child->sign *= (*node)->sign;
+      (*node)->first_child = NULL;
       child->next = eq_delete(*node);
       *node = child;
     }
