@@ -4,16 +4,18 @@
 #include "common.h"
 #include "summ.h"
 #include "mul.h"
+#include "reciprocal.h"
 
-void eq_nothing(struct eq_node *node, void (*calc)(void *)) {return;}
+void eq_nothing(struct eq_node **node, void (*calc)(void **)) {return;}
 void transform_nothing(void **node, void (*transform)(void **)) {return;}
 
-static void (* calculate[])(struct eq_node *node, void (*)(void *)) = {
+static void (* calculate[])(struct eq_node **node, void (*)(void **)) = {
               NULL,
               eq_nothing,
               eq_nothing,
               eq_calculate_summ,
-              eq_calculate_mul
+              eq_calculate_mul,
+              eq_calculate_reciprocal
               };
                
 static void (* transform[])(void **node, void (*)(void **)) = {
@@ -21,16 +23,17 @@ static void (* transform[])(void **node, void (*)(void **)) = {
                 transform_nothing,
                 transform_nothing,
                 eq_transform_summ,
-                eq_transform_mul
+                eq_transform_mul,
+                eq_transform_reciprocal
                 };
                 
 
-void eq_calculate(void *node)
+void eq_calculate(void **node)
 {
-  if(eq_is_leaf(node))
+  if(eq_is_leaf(*node))
     goto ret;
   
-  calculate[((struct eq_node *)node)->type]((struct eq_node *)node, eq_calculate);
+  calculate[((struct eq_node *)*node)->type]((struct eq_node **)node, eq_calculate);
   
 ret:
   return;

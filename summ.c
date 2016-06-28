@@ -61,30 +61,30 @@ void eq_combine_summ(struct eq_node *node)
 /*
  * Calculate summ. Node type must be EQ_SUMM
  */
-void eq_calculate_summ(struct eq_node *node, void (*calculate)(void *))
+void eq_calculate_summ(struct eq_node **node, void (*calculate)(void **))
 {
-  struct eq_leaf *num = node->first_child;
+  struct eq_leaf **num = (struct eq_leaf **)&(*node)->first_child;
   struct eq_leaf *leaf;
   struct eq_leaf **prev;
   
   if(calculate != NULL) {
-    while(num != NULL) {
-      calculate(num);
-      num = num->next;
+    while(*num != NULL) {
+      calculate((void **)num);
+      num = (struct eq_leaf **)&(*num)->next;
     }
   }
   
-  num = node->first_child;
+  num = &(*node)->first_child;
   
-  while(num != NULL && num->type != EQ_NUMBER)
-    num = num->next;
+  while(*num != NULL && (*num)->type != EQ_NUMBER)
+    num = (struct eq_leaf **)&(*num)->next;
   
-  if (num == NULL)
+  if (*num == NULL)
     goto ret;
   
-  prev = (struct eq_leaf **)&num->next;
-  leaf = num->next;
-  double val = num->value * num->sign;
+  prev = (struct eq_leaf **)&(*num)->next;
+  leaf = (*num)->next;
+  double val = (*num)->value * (*num)->sign;
   while(leaf != NULL) {
     if(leaf->type == EQ_NUMBER) {
       val += leaf->value * leaf->sign;
@@ -95,10 +95,10 @@ void eq_calculate_summ(struct eq_node *node, void (*calculate)(void *))
     
     leaf = *prev;
   }
-  num->value = fabs(val);
-  num->sign = 1;
+  (*num)->value = fabs(val);
+  (*num)->sign = 1;
   if(val < 0)
-    num->sign = -1;
+    (*num)->sign = -1;
 ret:
   return;
 }

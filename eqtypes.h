@@ -6,7 +6,7 @@ enum eq_type {
     EQ_NUMBER,
     EQ_SUMM,
     EQ_MUL,
-    EQ_DIV,
+    EQ_RECIPROCAL,
     EQ_SIN,
     EQ_COS,
 };

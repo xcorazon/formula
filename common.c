@@ -274,7 +274,7 @@ void eq_move_children(struct eq_node *node1, struct eq_node *node2)
     eq_move_sign_in(node2);
     child->next = node2->first_child;
     node2->first_child = NULL;
-  } else if(node2->type == EQ_MUL) {
+  } else if(node2->type == EQ_MUL || node2->type == EQ_RECIPROCAL) {
     ((struct eq_node *)node2->first_child)->sign *= node2->sign;
     child->next = node2->first_child;
     node2->first_child = NULL;
