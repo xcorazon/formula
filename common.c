@@ -358,13 +358,22 @@ void *eq_find_common_mul(struct eq_node *node)
     else
       result = child;
     
-    while(current != NULL) {
-      if(eq_equals(result, current, false) || (current->type == EQ_MUL && eq_find(current, result) != NULL))
-        return result;
-      current = current->next;
+    while(result != NULL) {
+      while(current != NULL) {
+        if(eq_equals(result, current, false) || (current->type == EQ_MUL && eq_find(current, result) != NULL))
+          return result;
+        current = current->next;
+      }
+      
+      if(child->type == EQ_MUL) {
+        current = child->next;
+        result  = result->next;
+      } else {
+        child   = child->next;
+        current = child->next;
+        break;
+      }
     }
-    child   = child->next;
-    current = child->next;
   }
 ret:
   return NULL;
