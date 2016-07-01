@@ -83,9 +83,9 @@ ret:
   return;
 }
 
-void eq_calculate_reciprocal(struct eq_node **node, void (*calculate)(void **))
+void eq_calculate_reciprocal(struct eq_node **node)
 {
-  eq_calculate_mul(node, calculate);
+  eq_calculate_mul(node);
   
   if(eq_children_count(*node) == 1) {
     struct eq_leaf *child = (*node)->first_child;
@@ -102,7 +102,7 @@ void eq_calculate_reciprocal(struct eq_node **node, void (*calculate)(void **))
 }
 
 
-void eq_transform_reciprocal(void **rec, void (*transform)(void **))
+void eq_transform_reciprocal(void **rec)
 {
   struct eq_node *child;
   int count = eq_children_count(*rec);

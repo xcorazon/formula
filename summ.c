@@ -61,20 +61,13 @@ void eq_combine_summ(struct eq_node *node)
 /*
  * Calculate summ. Node type must be EQ_SUMM
  */
-void eq_calculate_summ(struct eq_node **node, void (*calculate)(void **))
+void eq_calculate_summ(struct eq_node **node)
 {
   struct eq_leaf **num = (struct eq_leaf **)&(*node)->first_child;
   struct eq_leaf *leaf;
   struct eq_leaf **prev;
   
-  if(calculate != NULL) {
-    while(*num != NULL) {
-      calculate((void **)num);
-      num = (struct eq_leaf **)&(*num)->next;
-    }
-  }
-  
-  num = &(*node)->first_child;
+  num = (struct eq_leaf **)&(*node)->first_child;
   
   while(*num != NULL && (*num)->type != EQ_NUMBER)
     num = (struct eq_leaf **)&(*num)->next;
@@ -106,7 +99,7 @@ ret:
 /*
  * Transform summ.
  */
-void eq_transform_summ(void **summ, void (*transform)(void **))
+void eq_transform_summ(void **summ)
 {
   struct eq_node *child = ((struct eq_node *)(*summ))->first_child;
   if(child == NULL) {

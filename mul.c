@@ -39,7 +39,7 @@ void eq_move_multiplier_out(struct eq_node **node, struct eq_node *multiplier)
   struct eq_node **prev = (struct eq_node **)&(*node)->first_child;
   
   while(child != NULL) {
-    if(eq_is_leaf(child) && eq_equals(child, mul_clone, false)) {
+    if(eq_equals(child, mul_clone, false)) {
       *prev = child->next;
       void *tmp = eq_leaf_new(EQ_NUMBER, child->sign * mul_clone->sign, NULL, 1.0);
       summ = eq_add(&summ, &tmp);
@@ -50,6 +50,7 @@ void eq_move_multiplier_out(struct eq_node **node, struct eq_node *multiplier)
     
     if(child->type == EQ_MUL) {
       struct eq_node *tmp = eq_find(child, mul_clone);
+
       if(tmp != NULL) {
         eq_remove_child(child, mul_clone);
         *prev = child->next;
@@ -79,6 +80,7 @@ void eq_move_multiplier_in(struct eq_node **node)
     goto ret;
   
   struct eq_node **child = (struct eq_node **)&(*node)->first_child;
+  
   while(*child != NULL) {
     eq_move_multiplier_in(child);
     child = (struct eq_node **)&(*child)->next;
@@ -90,6 +92,7 @@ void eq_move_multiplier_in(struct eq_node **node)
   // find summ
   struct eq_node *summ = (*node)->first_child;
   struct eq_node **prev = (struct eq_node **)&(*node)->first_child;
+  
   while(summ != NULL){
     if(summ->type == EQ_SUMM){
       *prev = (struct eq_node *)summ->next;
@@ -100,13 +103,16 @@ void eq_move_multiplier_in(struct eq_node **node)
     prev = (struct eq_node **)&summ->next;
     summ = *prev;
   }
+  
   if(summ == NULL)
     goto ret;
   
   // move node in summ
   prev = (struct eq_node **)&summ->first_child;
+  
   if(*prev != NULL) {
     void *next = (*prev)->next;
+    
     while(next != NULL) {
       void *tmp2 = eq_clone(*node);
       *prev = eq_mul((void **)prev, &tmp2);
@@ -148,7 +154,6 @@ void eq_combine_mul(struct eq_node *node)
   
   if(node->type == EQ_MUL) {
     while(child != NULL) {
-      
       if(child->type == EQ_MUL) {
         eq_move_children(node, child);
         *prev = child->next;
@@ -163,18 +168,11 @@ void eq_combine_mul(struct eq_node *node)
   }
 }
 
-void eq_calculate_mul(struct eq_node **node, void (*calculate)(void **))
+void eq_calculate_mul(struct eq_node **node)
 {
   struct eq_leaf **num = (struct eq_leaf **)&(*node)->first_child;
   struct eq_leaf *leaf;
   struct eq_leaf **prev;
-  
-  if(calculate != NULL) {
-    while(*num != NULL) {
-      calculate((void**)num);
-      num = (struct eq_leaf **)&(*num)->next;
-    }
-  }
   
   div_symbols(*node);
   
@@ -189,8 +187,8 @@ void eq_calculate_mul(struct eq_node **node, void (*calculate)(void **))
   prev = (struct eq_leaf **)&(*num)->next;
   leaf = (*num)->next;
   (*num)->value *= (*num)->sign;
+  
   while(leaf != NULL) {
-    
     if(leaf->type == EQ_NUMBER) {
       (*num)->value *= leaf->value * leaf->sign;
       *prev = leaf->next;
@@ -218,15 +216,14 @@ void div_symbols(struct eq_node *mul)
 repeat:
   
   while(*multiplier != NULL) {
-  
     if((*multiplier)->type == EQ_RECIPROCAL) {
       multiplier = (struct eq_node **)&(*multiplier)->next;
       continue;
     }
     
     struct eq_node* child = (*multiplier)->next;
-    while(child != NULL) {
     
+    while(child != NULL) {
       if(child->type == EQ_RECIPROCAL) {
         struct eq_node **divisor = (struct eq_node **)&child->first_child;
         
@@ -247,9 +244,10 @@ repeat:
 }
 
 
-void eq_transform_mul(void **mul, void (*transform)(void **))
+void eq_transform_mul(void **mul)
 {
   struct eq_node *child = ((struct eq_node *)(*mul))->first_child;
+  
   if(child == NULL) {
     void *next = eq_delete(*mul);;
     *mul = eq_leaf_new(EQ_NUMBER, (*(struct eq_node **)mul)->sign, "", 1);
@@ -269,6 +267,7 @@ void eq_transform_mul(void **mul, void (*transform)(void **))
   
   child = ((struct eq_node *)(*mul))->first_child;
   void **prev = &((struct eq_node *)(*mul))->first_child;
+  
   while(child != NULL) {
     (*(struct eq_node **)mul)->sign *= child->sign;
     child->sign = 1;

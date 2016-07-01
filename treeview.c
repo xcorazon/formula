@@ -1,3 +1,4 @@
+#include "common.h"
 #include "treeview.h"
 #include <string.h>
 #include <stdio.h>
@@ -13,6 +14,8 @@ static void (* to_string[])(void *node, int flags, char *result) = {
       tv_leaf,
       tv_node,
       tv_node,
+      tv_node,
+      tv_node,
       tv_node
 };
       
@@ -22,7 +25,9 @@ static char *types[] = {
       "Number",
       "Summ",
       "Mul",
-      "Reciprocal"
+      "Reciprocal",
+      "Sin",
+      "Cos"
 };
 
 
