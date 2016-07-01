@@ -17,7 +17,8 @@ static void (* calculate[])(struct eq_node **node) = {
               eq_calculate_summ,
               eq_calculate_mul,
               eq_calculate_reciprocal,
-              eq_calculate_sin
+              eq_calculate_sin,
+              eq_calculate_cos
               };
                
 static void (* transform[])(void **node) = {
@@ -27,7 +28,8 @@ static void (* transform[])(void **node) = {
                 eq_transform_summ,
                 eq_transform_mul,
                 eq_transform_reciprocal,
-                eq_transform_sin
+                eq_transform_sin,
+                eq_transform_cos
                 };
                 
 

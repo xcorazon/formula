@@ -4,7 +4,7 @@ COMPILER_PATH := d:/Soft/MinGW/bin/
 
 OS = OS_WINDOWS
 #CFLAGS := -std=c99 -g -Wall -O2 -I$(INCLUDE_PATH) -B$(COMPILER_PATH)
-CFLAGS := -std=c99 -g -Wall -I$(INCLUDE_PATH) -B$(COMPILER_PATH) -D$(OS)
+CFLAGS := -std=gnu99 -g -Wall -I$(INCLUDE_PATH) -B$(COMPILER_PATH) -D$(OS)
 
 CC := gcc.exe
 
@@ -14,7 +14,7 @@ OUT_DIR := d:/ForSite/calculation_c/result/
 
 VPATH = $(OUT_DIR)
 
-test.exe : test.o common.o starmath.o summ.o mul.o transform.o reciprocal.o treeview.o debug.o
+test.exe : test.o common.o starmath.o summ.o mul.o transform.o reciprocal.o treeview.o debug.o sincos.o
 	$(CC) $(OUT_DIR)test.o\
                   $(OUT_DIR)common.o\
                   $(OUT_DIR)starmath.o\
@@ -24,6 +24,7 @@ test.exe : test.o common.o starmath.o summ.o mul.o transform.o reciprocal.o tree
                   $(OUT_DIR)transform.o\
                   $(OUT_DIR)treeview.o\
                   $(OUT_DIR)debug.o\
+                  $(OUT_DIR)sincos.o\
                   -o $(OUT_DIR)$@
 
 #test.exe : test.obj
@@ -44,6 +45,9 @@ summ.o: summ.c summ.h eqtypes.h
   
 mul.o: mul.c mul.h eqtypes.h common.h
 	$(CC) -c $(CFLAGS) -fdata-sections -ffunction-sections -o $(OUT_DIR)$@ mul.c
+  
+sincos.o: sincos.c sincos.h eqtypes.h common.h
+	$(CC) -c $(CFLAGS) -fdata-sections -ffunction-sections -o $(OUT_DIR)$@ sincos.c
   
 reciprocal.o: reciprocal.c reciprocal.h eqtypes.h common.h mul.h
 	$(CC) -c $(CFLAGS) -fdata-sections -ffunction-sections -o $(OUT_DIR)$@ reciprocal.c
