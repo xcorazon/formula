@@ -58,6 +58,21 @@ void eq_combine_summ(struct eq_node *node)
   }
 }
 
+void eq_delete_zero(struct eq_node *summ)
+{
+  struct eq_leaf **prev = &summ->first_child;
+  struct eq_leaf *leaf = summ->first_child;
+  
+  while(leaf != NULL) {
+    if(leaf->type == EQ_NUMBER && leaf->value == 0)
+      *prev = eq_delete(leaf);
+    else 
+      prev = &leaf->next;
+    
+    leaf = *prev;
+  }
+}
+
 /*
  * Calculate summ. Node type must be EQ_SUMM
  */
@@ -115,8 +130,10 @@ void eq_transform_summ(void **summ)
     ((struct eq_node *)res)->next = eq_delete(*summ);
     *summ = res;
     goto ret;
-  } else 
+  } else {
     eq_combine_summ(*summ);
+    eq_delete_zero(*summ);
+  }
   
 ret:
   return;

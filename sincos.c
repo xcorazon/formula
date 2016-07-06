@@ -1,9 +1,9 @@
 #include <stdlib.h>
+#include <math.h>
 
 #include "sincos.h"
 #include "common.h"
 #include "summ.h"
-#include "math.h"
 
 
 void eq_calculate_sin(struct eq_node **node)
@@ -33,8 +33,8 @@ void eq_transform_sin(void **node)
   if(child == NULL)
     goto ret;
   
-  /* ñèíóñ íå÷åòíàÿ ôóíêöèÿ,
-     ïîýòîìó çíàê âûíîñèì çà ïðåäåëû ôóíêöèè */
+  /* ÑÐ¸Ð½ÑƒÑ Ð½ÐµÑ‡ÐµÑ‚Ð½Ð°Ñ Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ,
+     Ð¿Ð¾ÑÑ‚Ð¾Ð¼Ñƒ Ð·Ð½Ð°Ðº Ð²Ñ‹Ð½Ð¾ÑÐ¸Ð¼ Ð·Ð° Ð¿Ñ€ÐµÐ´ÐµÐ»Ñ‹ Ñ„ÑƒÐ½ÐºÑ†Ð¸Ð¸ */
   ((struct eq_node *)*node)->sign *= child->sign;
   child->sign = 1;
   
@@ -59,15 +59,15 @@ void eq_transform_sin(void **node)
     }
     
     num->value = val;
-    double sin_res = sin(num->sign * val * M_PI / 180);
+    double sin_res = sin(num->sign * delta * M_PI / 180);
     
-    if(sin_res == 0) {
-      ((struct eq_node *)*node)->sign *= cos(num->sign * val * M_PI / 180);
+    if(abs(sin_res) <= 0.00001) {
+      ((struct eq_node *)*node)->sign *= round(cos(num->sign * delta * M_PI / 180));
       goto ret;
     }
     
     ((struct eq_node *)*node)->type = EQ_COS;
-    ((struct eq_node *)*node)->sign *= sin_res;
+    ((struct eq_node *)*node)->sign *= round(sin_res);
   }
   
 ret:
@@ -102,8 +102,8 @@ void eq_transform_cos(void **node)
   if(child == NULL)
     goto ret;
   
-  /* êîñèíóñ ÷åòíàÿ ôóíêöèÿ,
-     ïîýòîìó ìåíÿåì çíàê âûðàæåíèÿ ïîä ôóíêöèåé íà "+" */
+  /* ÐºÐ¾ÑÐ¸Ð½ÑƒÑ Ñ‡ÐµÑ‚Ð½Ð°Ñ Ñ„ÑƒÐ½ÐºÑ†Ð¸Ñ,
+     Ð¿Ð¾ÑÑ‚Ð¾Ð¼Ñƒ Ð¼ÐµÐ½ÑÐµÐ¼ Ð·Ð½Ð°Ðº Ð²Ñ‹Ñ€Ð°Ð¶ÐµÐ½Ð¸Ñ Ð¿Ð¾Ð´ Ñ„ÑƒÐ½ÐºÑ†Ð¸ÐµÐ¹ Ð½Ð° "+" */
   child->sign = 1;
   
   if(child->type == EQ_SUMM) {
@@ -127,15 +127,15 @@ void eq_transform_cos(void **node)
     }
     
     num->value = val;
-    double cos_res = cos(num->sign * val * M_PI / 180);
+    double cos_res = cos(num->sign * delta * M_PI / 180);
     
-    if(cos_res == 0) {
-      ((struct eq_node *)*node)->sign *= -sin(num->sign * val * M_PI / 180);
+    if(abs(cos_res) <= 0.00001) {
+      ((struct eq_node *)*node)->sign *= -round(sin(num->sign * delta * M_PI / 180));
       ((struct eq_node *)*node)->type = EQ_SIN;
       goto ret;
     }
     
-    ((struct eq_node *)*node)->sign *= cos_res;
+    ((struct eq_node *)*node)->sign *= round(cos_res);
   }
   
 ret:
