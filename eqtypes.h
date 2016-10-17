@@ -9,6 +9,9 @@ enum eq_type {
     EQ_RECIPROCAL,
     EQ_SIN,
     EQ_COS,
+    EQ_ASIN,
+    EQ_ACOS,
+    EQ_POW
 };
 
 /* Node of equation tree */

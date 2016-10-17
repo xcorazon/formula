@@ -16,6 +16,8 @@ static void (* to_string[])(void *node, int flags, char *result) = {
       tv_node,
       tv_node,
       tv_node,
+      tv_node,
+      tv_node,
       tv_node
 };
       
@@ -27,7 +29,9 @@ static char *types[] = {
       "Mul",
       "Reciprocal",
       "Sin",
-      "Cos"
+      "Cos",
+      "Asin",
+      "Acos",
 };
 
 

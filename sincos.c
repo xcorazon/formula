@@ -38,6 +38,7 @@ void eq_transform_sin(void **node)
   ((struct eq_node *)*node)->sign *= child->sign;
   child->sign = 1;
   
+  /* под синусом сумма угла и численного значения */
   if(child->type == EQ_SUMM) {
     struct eq_leaf *num = get_summ_number(child);
     
@@ -68,6 +69,18 @@ void eq_transform_sin(void **node)
     
     ((struct eq_node *)*node)->type = EQ_COS;
     ((struct eq_node *)*node)->sign *= round(sin_res);
+    
+    goto ret;
+  }
+  
+  /* под синусом арксинус */
+  if(child->type == EQ_ASIN) {
+    struct eq_node *res = child->first_child;
+    child->first_child = NULL;
+    res->sign *= child->sign * ((struct eq_node *)*node)->sign;
+    
+    res->next = eq_delete(*node);
+    *node = res;
   }
   
 ret:
@@ -136,6 +149,18 @@ void eq_transform_cos(void **node)
     }
     
     ((struct eq_node *)*node)->sign *= round(cos_res);
+    
+    goto ret;
+  }
+  
+  /* под косинусом арккосинус */
+  if(child->type == EQ_ACOS) {
+    struct eq_node *res = child->first_child;
+    child->first_child = NULL;
+    res->sign *= child->sign;
+    
+    res->next = eq_delete(*node);
+    *node = res;
   }
   
 ret:

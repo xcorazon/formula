@@ -6,6 +6,7 @@
 #include "mul.h"
 #include "reciprocal.h"
 #include "sincos.h"
+#include "asincos.h"
 
 void eq_nothing(struct eq_node **node) {return;}
 void transform_nothing(void **node) {return;}
@@ -18,7 +19,9 @@ static void (* calculate[])(struct eq_node **node) = {
               eq_calculate_mul,
               eq_calculate_reciprocal,
               eq_calculate_sin,
-              eq_calculate_cos
+              eq_calculate_cos,
+              eq_calculate_asin,
+              eq_calculate_acos,
               };
                
 static void (* transform[])(void **node) = {
@@ -29,7 +32,9 @@ static void (* transform[])(void **node) = {
                 eq_transform_mul,
                 eq_transform_reciprocal,
                 eq_transform_sin,
-                eq_transform_cos
+                eq_transform_cos,
+                eq_transform_asin,
+                eq_transform_acos
                 };
                 
 
