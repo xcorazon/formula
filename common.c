@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
+#include <wchar.h>
 #include "eqtypes.h"
 #include "common.h"
 
@@ -34,9 +35,9 @@ struct eq_leaf *eq_leaf_new(unsigned char type, char sign, char *name, double va
   
   struct eq_leaf *leaf = (struct eq_leaf *)malloc(sizeof(*leaf));
   if(type == EQ_SYMBOL) {
-    char *str = (char *)malloc(strlen(name) + 1);
+    wchar_t *str = (wchar_t *)malloc((wcslen(name) + 1)*sizeof(wchar_t));
   
-    strcpy(str, name);
+    wcscpy(str, name);
     leaf->name = str;
   } else
     leaf->value = val;
@@ -193,7 +194,7 @@ int eq_equals(struct eq_node *eq1, struct eq_node *eq2, int absolute)
     
     if(eq1->type == EQ_NUMBER && ((struct eq_leaf *)eq1)->value == ((struct eq_leaf *)eq2)->value)
       return true;
-    else if(strcmp(((struct eq_leaf *)eq1)->name, ((struct eq_leaf *)eq2)->name) == 0)
+    else if(wcscmp(((struct eq_leaf *)eq1)->name, ((struct eq_leaf *)eq2)->name) == 0)
       return true;
   } else {
     

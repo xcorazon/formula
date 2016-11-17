@@ -1,6 +1,8 @@
 #ifndef EQ_TYPES_H
 #define EQ_TYPES_H
 
+#include <wchar.h>
+
 enum eq_type {
     EQ_SYMBOL = 1,
     EQ_NUMBER,
@@ -30,7 +32,7 @@ struct eq_leaf {
     void *next;
     
     union {
-      char *name;
+      wchar_t *name;
       double value;
     };
     unsigned char priority;

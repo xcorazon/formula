@@ -2,6 +2,7 @@
 #include "debug.h"
 #include <stdio.h>
 #include <stdarg.h>
+#include <wchar.h>
 
 #ifdef OS_WINDOWS
   #include <windows.h>
@@ -16,10 +17,10 @@
 void debug(char *fmt,...)
 {
   va_list     args;
-  static char buf[8*1024];
+  static wchar_t buf[8*1024];
 
   va_start(args,fmt);
-  vsnprintf(buf, sizeof(buf)-3, fmt, args);
+  vswprintf(buf, sizeof(buf), fmt, args);
   
   #ifdef OS_WINDOWS
   OutputDebugString(buf);
