@@ -3,12 +3,13 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <wchar.h>
 
 
-void tv_leaf(void *node, int tab, char *result);
-void tv_node(void *node, int tab, char *result);
+void tv_leaf(void *node, int tab, wchar_t *result);
+void tv_node(void *node, int tab, wchar_t *result);
 
-static void (* to_string[])(void *node, int flags, char *result) = {
+static void (* to_string[])(void *node, int flags, wchar_t *result) = {
       NULL,
       tv_leaf, 
       tv_leaf,
@@ -21,21 +22,21 @@ static void (* to_string[])(void *node, int flags, char *result) = {
       tv_node
 };
       
-static char *types[] = {
-      "",
-      "Symbol",
-      "Number",
-      "Summ",
-      "Mul",
-      "Reciprocal",
-      "Sin",
-      "Cos",
-      "Asin",
-      "Acos",
+static wchar_t *types[] = {
+      L"",
+      L"Symbol",
+      L"Number",
+      L"Summ",
+      L"Mul",
+      L"Reciprocal",
+      L"Sin",
+      L"Cos",
+      L"Asin",
+      L"Acos",
 };
 
 
-void tree_view(struct eq_node *node, int tab, char *result)
+void tree_view(struct eq_node *node, int tab, wchar_t *result)
 {
   if(eq_is_leaf(node))
     tv_leaf((void *)node, tab, result);
@@ -44,47 +45,47 @@ void tree_view(struct eq_node *node, int tab, char *result)
 }
 
 
-void tv_leaf(void *node, int tab, char *result)
+void tv_leaf(void *node, int tab, wchar_t *result)
 {
-  char tb[100];
-  char *nl = "\n";
-  char tmp[150];
+  wchar_t tb[100];
+  wchar_t *nl = L"\n";
+  wchar_t tmp[150];
   
-  memset(tb, 0, 100);
-  memset(tb, ' ', tab);
-  char sign = '+';
+  wmemset(tb, 0, 100);
+  wmemset(tb, L' ', tab);
+  wchar_t sign = L'+';
   if(((struct eq_leaf *)node)->sign < 0)
     sign='-';
   
   if(((struct eq_leaf *)node)->type == EQ_SYMBOL)
-    sprintf(tmp, "type: %s  %c%s", types[((struct eq_leaf *)node)->type], sign, ((struct eq_leaf *)node)->name);
+    swprintf(tmp, L"type: %s  %c%s", types[((struct eq_leaf *)node)->type], sign, ((struct eq_leaf *)node)->name);
   else
-    sprintf(tmp, "type: %s  %c%f", types[((struct eq_leaf *)node)->type], sign, ((struct eq_leaf *)node)->value);
+    swprintf(tmp, L"type: %s  %c%f", types[((struct eq_leaf *)node)->type], sign, ((struct eq_leaf *)node)->value);
   
-  strcat(result, nl);
-  strcat(result, tb);
-  strcat(result, tmp);
+  wcscat(result, nl);
+  wcscat(result, tb);
+  wcscat(result, tmp);
 }
 
 
-void tv_node(void *node, int tab, char *result)
+void tv_node(void *node, int tab, wchar_t *result)
 {
-  char tb[100];
-  char *nl = "\n";
-  char tmp[150];
+  wchar_t tb[100];
+  wchar_t *nl = L"\n";
+  wchar_t tmp[150];
   
-  memset(tb, 0, 100);
-  memset(tb, ' ', tab);
+  wmemset(tb, 0, 100);
+  wmemset(tb, L' ', tab);
   
-  char sign = '+';
+  wchar_t sign = L'+';
   if(((struct eq_node *)node)->sign < 0)
-    sign='-';
+    sign=L'-';
   
-  sprintf(tmp, "type: %s sign:\'%c\'", types[((struct eq_node *)node)->type], sign);
+  swprintf(tmp, L"type: %s sign:\'%c\'", types[((struct eq_node *)node)->type], sign);
   
-  strcat(result, nl);
-  strcat(result, tb);
-  strcat(result, tmp);
+  wcscat(result, nl);
+  wcscat(result, tb);
+  wcscat(result, tmp);
   
   struct eq_node *child = ((struct eq_node *)node)->first_child;
   while(child != NULL) {

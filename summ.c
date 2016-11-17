@@ -119,7 +119,7 @@ void eq_transform_summ(void **summ)
   struct eq_node *child = ((struct eq_node *)(*summ))->first_child;
   if(child == NULL) {
     void *next = eq_delete(*summ);
-    *summ = eq_leaf_new(EQ_NUMBER, 1, "", 0);
+    *summ = eq_leaf_new(EQ_NUMBER, 1, NULL, 0);
     (*(struct eq_node **)summ)->next = next; 
     goto ret;
   }

@@ -3,7 +3,7 @@ INCLUDE_PATH := d:/Soft/MinGW/include/
 COMPILER_PATH := d:/Soft/MinGW/bin/
 
 OS = OS_WINDOWS
-#CFLAGS := -std=c99 -g -Wall -O2 -I$(INCLUDE_PATH) -B$(COMPILER_PATH)
+#CFLAGS := -std=c99 -g -Wall -O2 -I$(INCLUDE_PATH) -B$(COMPILER_PATH) -D$(OS)
 CFLAGS := -std=gnu99 -g -Wall -I$(INCLUDE_PATH) -B$(COMPILER_PATH) -D$(OS)
 
 CC := gcc.exe

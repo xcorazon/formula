@@ -249,8 +249,8 @@ void eq_transform_mul(void **mul)
   struct eq_node *child = ((struct eq_node *)(*mul))->first_child;
   
   if(child == NULL) {
-    void *next = eq_delete(*mul);;
-    *mul = eq_leaf_new(EQ_NUMBER, (*(struct eq_node **)mul)->sign, "", 1);
+    void *next = eq_delete(*mul);
+    *mul = eq_leaf_new(EQ_NUMBER, (*(struct eq_node **)mul)->sign, NULL, 1);
     (*(struct eq_leaf **)mul)->next = next;
     goto ret;
   }
@@ -287,7 +287,7 @@ void eq_transform_mul(void **mul)
     num = num->next;
   
   if(num != NULL && num->value == 0){
-    struct eq_leaf *res = eq_leaf_new(EQ_NUMBER, 1, "", 0.0);
+    struct eq_leaf *res = eq_leaf_new(EQ_NUMBER, 1, NULL, 0.0);
     res->next = eq_delete(*mul);
     *mul = res;
   }

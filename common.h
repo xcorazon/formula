@@ -1,12 +1,13 @@
 #ifndef COMMON_H
 #define COMMON_H
 #include "eqtypes.h"
+#include <wchar.h>
 
 /*
  * Creation functions
  */
 struct eq_node * eq_node_new(unsigned char type, char sign);
-struct eq_leaf *eq_leaf_new(unsigned char type, char sign, char *name, double val);
+struct eq_leaf *eq_leaf_new(unsigned char type, char sign, wchar_t *name, double val);
 
 /*
  * Clone functions

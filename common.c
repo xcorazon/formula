@@ -28,7 +28,7 @@ struct eq_node *eq_node_new(unsigned char type, char sign)
 /*
  * Creates Number or Symbol
  */
-struct eq_leaf *eq_leaf_new(unsigned char type, char sign, char *name, double val)
+struct eq_leaf *eq_leaf_new(unsigned char type, char sign, wchar_t *name, double val)
 {
   if(type != EQ_SYMBOL && type != EQ_NUMBER)
     return NULL;

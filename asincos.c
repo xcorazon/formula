@@ -104,7 +104,7 @@ void eq_transform_acos(void **node)
       
       struct eq_node *angle = child->first_child;
       struct eq_node *summ = eq_node_new(EQ_SUMM, 1);
-      struct eq_leaf *num = eq_leaf_new(EQ_NUMBER, 1, "", 180.0);
+      struct eq_leaf *num = eq_leaf_new(EQ_NUMBER, 1, NULL, 180.0);
       
       child->first_child = NULL;
       summ->first_child = angle;
