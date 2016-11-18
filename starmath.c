@@ -27,8 +27,8 @@ void sm_symbol(struct eq_node *node, int flags, wchar_t *result)
   if(node->sign < 0)
     sign = L"-";
 
-  strcpy(result, sign);
-  strcat(result, ((struct eq_leaf *)node)->name);
+  wcscpy(result, sign);
+  wcscat(result, ((struct eq_leaf *)node)->name);
 }
 
 void sm_number(struct eq_node *node, int flags, wchar_t *result)
@@ -42,9 +42,9 @@ void sm_number(struct eq_node *node, int flags, wchar_t *result)
   if(node->sign < 0)
     sign = L"-";
   
-  strcpy(result, sign);
-  snprintf(tmp, 19, "%.2f", ((struct eq_leaf *)node)->value);
-  wchar_t *pos = strstr(tmp, ".00");
+  wcscpy(result, sign);
+  swprintf(tmp, 19, L"%.2f", ((struct eq_leaf *)node)->value);
+  wchar_t *pos = wcsstr(tmp, L".00");
   if(pos != NULL)
     *pos = L'\0';
   wcscat(result, tmp);
@@ -65,19 +65,19 @@ void sm_summ(struct eq_node *node, int flags, wchar_t *result)
     open_bracket  = L"(";
     close_bracket = L")";
   }
-  strcpy(result, sign);
-  strcat(result, open_bracket);
+  wcscpy(result, sign);
+  wcscat(result, open_bracket);
   
   int ts_flags = SM_DEFAULT & FR_SUMM;
   struct eq_node *child = (struct eq_node *)node->first_child;
   while(child != NULL) {
     to_string[child->type]((struct eq_node *)child, ts_flags, tmp);
-    strcat(result, tmp);
+    wcscat(result, tmp);
     ts_flags = SM_SHOW_SIGN;
     child = (struct eq_node *)child->next;
   }
   
-  strcat(result, close_bracket);
+  wcscat(result, close_bracket);
 }
 
 void sm_mul(struct eq_node *node, int flags, wchar_t *result)
@@ -99,19 +99,19 @@ void sm_mul(struct eq_node *node, int flags, wchar_t *result)
   else if ((flags & SM_SHOW_SIGN) != 0)
     sign = L"+";
   
-  strcpy(result, sign);
-  strcat(result, open_bracket);
+  wcscpy(result, sign);
+  wcscat(result, open_bracket);
   
   int ts_flags = SM_ROUND_BRACKET & FR_MUL;
   child = (struct eq_node *)node->first_child;
   while(child != NULL) {
     to_string[child->type]((struct eq_node *)child, ts_flags, tmp);
-    strcat(result, tmp);
+    wcscat(result, tmp);
     child = child->next;
     if(child != NULL)
-      strcat(result, L" cdot ");
+      wcscat(result, L" cdot ");
   }
-  strcat(result, close_bracket);
+  wcscat(result, close_bracket);
 }
 
 void sm_reciprocal(struct eq_node *node, int flags, wchar_t *result)
@@ -122,12 +122,12 @@ void sm_reciprocal(struct eq_node *node, int flags, wchar_t *result)
   *tmp = 0;
   
   if((flags & (0xFFFF << 16)) != FR_MUL) {
-    strcpy(tmp, open_bracket);
-    strcat(tmp, L"{1}");
+    wcscpy(tmp, open_bracket);
+    wcscat(tmp, L"{1}");
   }
   
   if(node->type == EQ_RECIPROCAL) {
-    strcat(tmp, L" over ");
+    wcscat(tmp, L" over ");
     node->type = EQ_MUL;
     char tmp_sign = node->sign;
     node->sign = 1;
@@ -138,9 +138,9 @@ void sm_reciprocal(struct eq_node *node, int flags, wchar_t *result)
     node->sign = tmp_sign;
     
     if((flags & (0xFFFF << 16)) != FR_MUL)
-      strcat(tmp, close_bracket);
+      wcscat(tmp, close_bracket);
     
-    strcat(result, tmp);
+    wcscat(result, tmp);
   }
 }
 
