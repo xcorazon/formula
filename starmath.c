@@ -1,12 +1,12 @@
 #include <stdio.h>
-#include <string.h>
+#include <wchar.h>
 #include <stdlib.h>
 #include <math.h>
 #include "eqtypes.h"
 #include "starmath.h"
 
 
-static void (* to_string[])(struct eq_node *node, int flags, char *result) = {
+static void (* to_string[])(struct eq_node *node, int flags, wchar_t *result) = {
       NULL,
       sm_symbol, 
       sm_number,
@@ -19,51 +19,51 @@ static void (* to_string[])(struct eq_node *node, int flags, char *result) = {
       sm_acos
       };
 
-void sm_symbol(struct eq_node *node, int flags, char *result)
+void sm_symbol(struct eq_node *node, int flags, wchar_t *result)
 {
-  char *sign = "";
+  wchar_t *sign = L"";
   if((flags & SM_SHOW_SIGN) != 0)
-    sign = "+";
+    sign = L"+";
   if(node->sign < 0)
-    sign = "-";
+    sign = L"-";
 
   strcpy(result, sign);
   strcat(result, ((struct eq_leaf *)node)->name);
 }
 
-void sm_number(struct eq_node *node, int flags, char *result)
+void sm_number(struct eq_node *node, int flags, wchar_t *result)
 {
-  char *sign = "";
-  char tmp[20];
+  wchar_t *sign = L"";
+  wchar_t tmp[20];
   *tmp = 0;
   
   if((flags & SM_SHOW_SIGN) != 0)
-    sign = "+";
+    sign = L"+";
   if(node->sign < 0)
-    sign = "-";
+    sign = L"-";
   
   strcpy(result, sign);
   snprintf(tmp, 19, "%.2f", ((struct eq_leaf *)node)->value);
-  char *pos = strstr(tmp, ".00");
+  wchar_t *pos = strstr(tmp, ".00");
   if(pos != NULL)
-    *pos = '\0';
-  strcat(result, tmp);
+    *pos = L'\0';
+  wcscat(result, tmp);
 }
 
-void sm_summ(struct eq_node *node, int flags, char *result)
+void sm_summ(struct eq_node *node, int flags, wchar_t *result)
 {
-  char tmp[1000];
-  char *open_bracket = "{";
-  char *close_bracket = "}";
+  wchar_t tmp[1000];
+  wchar_t *open_bracket = L"{";
+  wchar_t *close_bracket = L"}";
   *tmp = 0;
-  char *sign = "";
+  wchar_t *sign = L"";
   if((flags & SM_SHOW_SIGN) != 0)
-    sign = "+";
+    sign = L"+";
   if(node->sign < 0)
-    sign = "-";
+    sign = L"-";
   if(node->sign < 0 || (flags & SM_ROUND_BRACKET) != 0) {
-    open_bracket  = "(";
-    close_bracket = ")";
+    open_bracket  = L"(";
+    close_bracket = L")";
   }
   strcpy(result, sign);
   strcat(result, open_bracket);
@@ -80,24 +80,24 @@ void sm_summ(struct eq_node *node, int flags, char *result)
   strcat(result, close_bracket);
 }
 
-void sm_mul(struct eq_node *node, int flags, char *result)
+void sm_mul(struct eq_node *node, int flags, wchar_t *result)
 {
-  char tmp[1000];
-  char *open_bracket = "{";
-  char *close_bracket = "}";
+  wchar_t tmp[1000];
+  wchar_t *open_bracket = L"{";
+  wchar_t *close_bracket = L"}";
   *tmp = 0;
   struct eq_node *child = node->first_child;
   
-  char s = node->sign;
-  char *sign = "";
+  wchar_t s = node->sign;
+  wchar_t *sign = L"";
   while(child != NULL) {
     s *= child->sign;
     child = child->next;
   }
   if(s < 0)
-    sign = "-";
+    sign = L"-";
   else if ((flags & SM_SHOW_SIGN) != 0)
-    sign = "+";
+    sign = L"+";
   
   strcpy(result, sign);
   strcat(result, open_bracket);
@@ -109,25 +109,25 @@ void sm_mul(struct eq_node *node, int flags, char *result)
     strcat(result, tmp);
     child = child->next;
     if(child != NULL)
-      strcat(result, " cdot ");
+      strcat(result, L" cdot ");
   }
   strcat(result, close_bracket);
 }
 
-void sm_reciprocal(struct eq_node *node, int flags, char *result)
+void sm_reciprocal(struct eq_node *node, int flags, wchar_t *result)
 {
-  char *open_bracket = "{";
-  char *close_bracket = "}";
-  char tmp[1000];
+  wchar_t *open_bracket = L"{";
+  wchar_t *close_bracket = L"}";
+  wchar_t tmp[1000];
   *tmp = 0;
   
   if((flags & (0xFFFF << 16)) != FR_MUL) {
     strcpy(tmp, open_bracket);
-    strcat(tmp, "{1}");
+    strcat(tmp, L"{1}");
   }
   
   if(node->type == EQ_RECIPROCAL) {
-    strcat(tmp, " over ");
+    strcat(tmp, L" over ");
     node->type = EQ_MUL;
     char tmp_sign = node->sign;
     node->sign = 1;
@@ -144,29 +144,29 @@ void sm_reciprocal(struct eq_node *node, int flags, char *result)
   }
 }
 
-void sm_sin(struct eq_node *node, int flags, char *result)
+void sm_sin(struct eq_node *node, int flags, wchar_t *result)
 {
   
 }
 
-void sm_cos(struct eq_node *node, int flags, char *result)
+void sm_cos(struct eq_node *node, int flags, wchar_t *result)
 {
   
 }
 
-void sm_asin(struct eq_node *node, int flags, char *result)
-{
-  
-}
-
-
-void sm_acos(struct eq_node *node, int flags, char *result)
+void sm_asin(struct eq_node *node, int flags, wchar_t *result)
 {
   
 }
 
 
-void sm_to_string(struct eq_node *node, int flags, char *result)
+void sm_acos(struct eq_node *node, int flags, wchar_t *result)
+{
+  
+}
+
+
+void sm_to_string(struct eq_node *node, int flags, wchar_t *result)
 {
   
 }
