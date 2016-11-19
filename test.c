@@ -22,6 +22,8 @@ int main(int argc, char *argv[])
   struct eq_leaf *b = eq_leaf_new(EQ_NUMBER, 1, L"b", 180);
   //struct eq_leaf *c = eq_leaf_new(EQ_SYMBOL, -1, L"a_1", 0);
   //struct eq_leaf *b1 = eq_leaf_new(EQ_SYMBOL, 1, L"b_1", 20.345);
+
+  setlocale(LC_ALL, "en_US.utf8");
   
   wprintf(L"cos(0.001) = %f, round = %i \n", cos(0.001), (int)round(cos(0.001)));
   
