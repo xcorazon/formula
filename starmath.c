@@ -156,14 +156,14 @@ void sm_mul(struct eq_node *node, int flags, wchar_t *result)
 
 void sm_sincos(struct eq_node *node, int flags, wchar_t *result)
 {
-    wchar_t *open_bracket = L"{";
-    wchar_t *close_bracket = L"}";
+    wchar_t *open_bracket = L"left (";
+    wchar_t *close_bracket = L"right )";
     
     struct eq_node *child = (struct eq_node *)node->first_child;
     
-    if (eq_children_count(node) > 1 || child->sign < 0) {
-        open_bracket = L"left (";
-        close_bracket = L"right )";
+    if ((child->type == EQ_SYMBOL || child->type == EQ_NUMBER) && child->sign > 0) {
+        open_bracket = L"{";
+        close_bracket = L"}";
     }
     
     char s = node->sign;
@@ -194,12 +194,14 @@ void sm_sincos(struct eq_node *node, int flags, wchar_t *result)
 
 void sm_asincos(struct eq_node *node, int flags, wchar_t *result)
 {
-    wchar_t *open_bracket = L"{";
-    wchar_t *close_bracket = L"}";
+    wchar_t *open_bracket = L"left (";
+    wchar_t *close_bracket = L"right )";
+
+    struct eq_node *child = (struct eq_node *)node->first_child;
     
-    if (eq_children_count(node) > 1) {
-        open_bracket = L"left (";
-        close_bracket = L"right )";
+    if ((child->type == EQ_SYMBOL || child->type == EQ_NUMBER) && child->sign > 0) {
+        open_bracket = L"{";
+        close_bracket = L"}";
     }
     
     char s = node->sign;
@@ -216,8 +218,6 @@ void sm_asincos(struct eq_node *node, int flags, wchar_t *result)
     else
         wcscat(result, L"arccos ");
     wcscat(result, open_bracket);
-    
-    struct eq_node *child = (struct eq_node *)node->first_child;
     
     while(child != NULL) {
         to_string[child->type](child, SM_DEFAULT, result);
