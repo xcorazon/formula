@@ -1,9 +1,10 @@
-#include <stdio.h>
+﻿#include <stdio.h>
 #include <wchar.h>
 #include <stdlib.h>
 #include <math.h>
 #include "eqtypes.h"
 #include "starmath.h"
+#include "common.h"
 
 #ifdef OS_WINDOWS
   #define swprintf _snwprintf
@@ -17,10 +18,10 @@ static void (* to_string[])(struct eq_node *node, int flags, wchar_t *result) = 
       sm_summ,
       sm_mul,
       sm_mul,
-      sm_sin,
-      sm_cos,
-      sm_asin,
-      sm_acos
+      sm_sincos,
+      sm_sincos,
+      sm_asincos,
+      sm_asincos
       };
 
 void sm_symbol(struct eq_node *node, int flags, wchar_t *result)
@@ -69,12 +70,13 @@ void sm_summ(struct eq_node *node, int flags, wchar_t *result)
     open_bracket  = L" left (";
     close_bracket = L" right )";
   }
-  wcscpy(result, sign);
+  wcscat(result, sign);
   wcscat(result, open_bracket);
   
   int ts_flags = SM_DEFAULT & FR_SUMM;
   struct eq_node *child = (struct eq_node *)node->first_child;
   while(child != NULL) {
+    tmp[0] = 0;
     to_string[child->type]((struct eq_node *)child, ts_flags, tmp);
     wcscat(result, tmp);
     ts_flags = SM_SHOW_SIGN;
@@ -152,25 +154,77 @@ void sm_mul(struct eq_node *node, int flags, wchar_t *result)
 }
 
 
-void sm_sin(struct eq_node *node, int flags, wchar_t *result)
+void sm_sincos(struct eq_node *node, int flags, wchar_t *result)
 {
-  
+    wchar_t *open_bracket = L"{";
+    wchar_t *close_bracket = L"}";
+    
+    struct eq_node *child = (struct eq_node *)node->first_child;
+    
+    if (eq_children_count(node) > 1 || child->sign < 0) {
+        open_bracket = L"left (";
+        close_bracket = L"right )";
+    }
+    
+    char s = node->sign;
+    wchar_t *sign = L"";
+    
+    if(s < 0)
+        sign = L"-";
+    else if ((flags & SM_SHOW_SIGN) != 0)
+        sign = L"+";
+    
+    wcscat(result, sign);
+    if(node->type == EQ_SIN)
+        wcscat(result, L"sin ");
+    else
+        wcscat(result, L"cos ");
+    wcscat(result, open_bracket);
+    
+    
+    
+    while(child != NULL) {
+        to_string[child->type](child, SM_DEFAULT, result);
+        child = child->next;
+    }
+    
+    wcscat(result, close_bracket);
 }
 
-void sm_cos(struct eq_node *node, int flags, wchar_t *result)
-{
-  
-}
 
-void sm_asin(struct eq_node *node, int flags, wchar_t *result)
+void sm_asincos(struct eq_node *node, int flags, wchar_t *result)
 {
-  
-}
-
-
-void sm_acos(struct eq_node *node, int flags, wchar_t *result)
-{
-  
+    wchar_t *open_bracket = L"{";
+    wchar_t *close_bracket = L"}";
+    
+    if (eq_children_count(node) > 1) {
+        open_bracket = L"left (";
+        close_bracket = L"right )";
+    }
+    
+    char s = node->sign;
+    wchar_t *sign = L"";
+    
+    if(s < 0)
+        sign = L"-";
+    else if ((flags & SM_SHOW_SIGN) != 0)
+        sign = L"+";
+    
+    wcscat(result, sign);
+    if(node->type == EQ_ASIN)
+        wcscat(result, L"arcsin ");
+    else
+        wcscat(result, L"arccos ");
+    wcscat(result, open_bracket);
+    
+    struct eq_node *child = (struct eq_node *)node->first_child;
+    
+    while(child != NULL) {
+        to_string[child->type](child, SM_DEFAULT, result);
+        child = child->next;
+    }
+    
+    wcscat(result, close_bracket);
 }
 
 
