@@ -4,7 +4,7 @@ COMPILER_PATH := d:/Soft/MinGW/bin/
 
 OS = OS_WINDOWS
 #OS = OS_LINUX
-CFLAGS := -std=c99 -g -Wall -O2 -I$(INCLUDE_PATH) -B$(COMPILER_PATH) -D$(OS)
+CFLAGS := -std=c99 -g -Wall -I$(INCLUDE_PATH) -B$(COMPILER_PATH) -D$(OS)
 #CFLAGS := -std=gnu99 -g -Wall -I$(INCLUDE_PATH) -B$(COMPILER_PATH) -D$(OS)
 
 CC := gcc.exe
