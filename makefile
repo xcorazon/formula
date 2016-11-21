@@ -3,8 +3,9 @@ INCLUDE_PATH := d:/Soft/MinGW/include/
 COMPILER_PATH := d:/Soft/MinGW/bin/
 
 OS = OS_WINDOWS
-#CFLAGS := -std=c99 -g -Wall -O2 -I$(INCLUDE_PATH) -B$(COMPILER_PATH) -D$(OS)
-CFLAGS := -std=gnu99 -g -Wall -I$(INCLUDE_PATH) -B$(COMPILER_PATH) -D$(OS)
+#OS = OS_LINUX
+CFLAGS := -std=c99 -g -Wall -O2 -I$(INCLUDE_PATH) -B$(COMPILER_PATH) -D$(OS)
+#CFLAGS := -std=gnu99 -g -Wall -I$(INCLUDE_PATH) -B$(COMPILER_PATH) -D$(OS)
 
 CC := gcc.exe
 
@@ -48,7 +49,7 @@ mul.o: mul.c mul.h eqtypes.h common.h
 	$(CC) -c $(CFLAGS) -fdata-sections -ffunction-sections -o $(OUT_DIR)$@ mul.c
 
 sincos.o: sincos.c sincos.h eqtypes.h common.h
-	$(CC) -c $(CFLAGS) -fdata-sections -ffunction-sections -o $(OUT_DIR)$@ sincos.c
+	$(CC) -c $(CFLAGS) -std=gnu99 -fdata-sections -ffunction-sections -o $(OUT_DIR)$@ sincos.c
 
 asincos.o: asincos.c asincos.h common.h eqtypes.h summ.h
 	$(CC) -c $(CFLAGS) -fdata-sections -ffunction-sections -o $(OUT_DIR)$@ asincos.c

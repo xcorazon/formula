@@ -5,6 +5,10 @@
 #include "eqtypes.h"
 #include "starmath.h"
 
+#ifdef OS_WINDOWS
+  #define swprintf _snwprintf
+#endif /* OS_WINDOWS */
+
 
 static void (* to_string[])(struct eq_node *node, int flags, wchar_t *result) = {
       NULL,
@@ -88,7 +92,7 @@ void sm_mul(struct eq_node *node, int flags, wchar_t *result)
     wchar_t *open_bracket = L"{";
     wchar_t *close_bracket = L"}";
 
-    static wchar_t dot = L" cdot ";
+    static wchar_t *dot = L" cdot ";
 
     *numerator = 0;
     *denom     = 0;
@@ -113,8 +117,8 @@ void sm_mul(struct eq_node *node, int flags, wchar_t *result)
     int ts_flags = SM_ROUND_BRACKET & FR_MUL;
     child = (struct eq_node *)node->first_child;
 
-    wchar_t ndot = L"";
-    wchar_t ddot = L"";
+    wchar_t *ndot = L"";
+    wchar_t *ddot = L"";
 
     while(child != NULL) {
         if (child->type == EQ_RECIPROCAL) {
@@ -122,23 +126,23 @@ void sm_mul(struct eq_node *node, int flags, wchar_t *result)
             sm_mul((struct eq_node *)child, FR_MUL, denom);
             ddot = dot;
         } else {
-            wcscat(nominator, ndot);
-            to_string[child->type]((struct eq_node *)child, ts_flags, nominator);
+            wcscat(numerator, ndot);
+            to_string[child->type]((struct eq_node *)child, ts_flags, numerator);
             ndot = dot;
-	}
+    }
 
         child = child->next;
     }
 
     if (*denom == 0) {
-        wcscat(result, nominator);
-    } else if (*nominator == 0) {
+        wcscat(result, numerator);
+    } else if (*numerator == 0) {
         wcscat(result, L"1 over {");
         wcscat(result, denom);
-        wcscat(result, L"}")
+        wcscat(result, L"}");
     } else {
         wcscat(result, L"{");
-        wcscat(result, nominator);
+        wcscat(result, numerator);
         wcscat(result, L"} over {");
         wcscat(result, denom);
         wcscat(result, L"}");

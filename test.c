@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
   
   *treeview_result = 0;
   tree_view(head, 0, treeview_result);
-  wprintf(treeview_result);
+  debug(treeview_result);
   
   wprintf(L"\ntesting %f\n", 20.1);
   

@@ -7,6 +7,10 @@
 
 #define MAX_CHARS 150
 
+#ifdef OS_WINDOWS
+  #define swprintf _snwprintf
+#endif /* OS_WINDOWS */
+
 void tv_leaf(void *node, int tab, wchar_t *result);
 void tv_node(void *node, int tab, wchar_t *result);
 

@@ -1,6 +1,5 @@
 //#include "debug/debug.h"
 #include "debug.h"
-#undef __STRICT_ANSI__ 
 #include <stdio.h>
 #include <stdarg.h>
 #include <wchar.h>
@@ -8,6 +7,7 @@
 
 #ifdef OS_WINDOWS
   #include <windows.h>
+  #define vswprintf _vsnwprintf
 #endif
   
 #ifdef OS_LINUX
@@ -16,24 +16,25 @@
   
 
 
-void debug(char *fmt,...)
+void debug(wchar_t *fmt,...)
 {
   va_list     args;
   static wchar_t buf[8*1024];
 
   va_start(args,fmt);
+  vswprintf(buf, sizeof(buf) / sizeof(wchar_t), fmt, args);
   
-  /*
   #ifdef OS_WINDOWS
-  OutputDebugString(buf);
+  OutputDebugStringW(buf);
   #endif
-  */
   
   #ifdef OS_LINUX
-  vswprintf(buf, sizeof(buf) / sizeof(wchar_t), fmt, args);
-  openlog("slog", LOG_PID|LOG_CONS, LOG_USER);
-  syslog(LOG_INFO, buf);
-  closelog();
+  FILE *fp;
+  fp = fopen("slog.txt", "a");
+  if(fp) {
+    fwprintf(fp, buf);
+    fclose(fp);
+  }
   #endif
   
   va_end(args);
