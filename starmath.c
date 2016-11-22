@@ -1,4 +1,4 @@
-﻿#include <stdio.h>
+#include <stdio.h>
 #include <wchar.h>
 #include <stdlib.h>
 #include <math.h>
@@ -24,6 +24,7 @@ static void (* to_string[])(struct eq_node *node, int flags, wchar_t *result) = 
       sm_asincos
       };
 
+
 void sm_symbol(struct eq_node *node, int flags, wchar_t *result)
 {
   wchar_t *sign = L"";
@@ -35,6 +36,7 @@ void sm_symbol(struct eq_node *node, int flags, wchar_t *result)
   wcscpy(result, sign);
   wcscat(result, ((struct eq_leaf *)node)->name);
 }
+
 
 void sm_number(struct eq_node *node, int flags, wchar_t *result)
 {
