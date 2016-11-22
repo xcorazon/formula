@@ -350,31 +350,30 @@ void *eq_find_common_mul(struct eq_node *node)
     goto ret;
   
   struct eq_node *child = node->first_child;
-  struct eq_node *current = child->next;
-  struct eq_node *result;
+  struct eq_node *summand = child->next;
+  struct eq_node *multiplier;
   
   while(child->next != NULL) {
     if(child->type == EQ_MUL)
-      result = child->first_child;
+      multiplier = child->first_child;
     else
-      result = child;
+      multiplier = child;
     
-    while(result != NULL) {
-      while(current != NULL) {
-        if(eq_equals(result, current, false) || (current->type == EQ_MUL && eq_find(current, result) != NULL))
-          return result;
-        current = current->next;
+    while(multiplier != NULL) {
+      while(summand != NULL) {
+        if(eq_equals(multiplier, summand, false) || (summand->type == EQ_MUL && eq_find(summand, multiplier) != NULL))
+          return multiplier;
+        summand = summand->next;
       }
       
       if(child->type == EQ_MUL) {
-        current = child->next;
-        result  = result->next;
-      } else {
-        child   = child->next;
-        current = child->next;
+        summand    = child->next;
+        multiplier = multiplier->next;
+      } else 
         break;
       }
-    }
+    child   = child->next;
+    summand = child->next;
   }
 ret:
   return NULL;
