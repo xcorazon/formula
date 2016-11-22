@@ -85,9 +85,9 @@ int main(int argc, char *argv[])
   if(number != NULL)
     wprintf(L"\nnumber = %f\n", number->value);
   
-  *treeview_result = 0;
-  tree_view(head, 0, treeview_result);
-  wprintf(treeview_result);
+  *starmath_result = 0;
+  sm_summ(head, 0, starmath_result);
+  debug(starmath_result);
   eq_node_delete(head);
   
   return 0;
