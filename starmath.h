@@ -18,6 +18,7 @@ void sm_symbol(struct eq_node *node, int flags, wchar_t *result);
 void sm_number(struct eq_node *node, int flags, wchar_t *result);
 void sm_summ(struct eq_node *node, int flags, wchar_t *result);
 void sm_mul(struct eq_node *node, int flags, wchar_t *result);
+void mul_to_str(int flags, char type, wchar_t *numerator, wchar_t *denom, wchar_t *result);
 
 void sm_sincos(struct eq_node *node, int flags, wchar_t *result);
 void sm_asincos(struct eq_node *node, int flags, wchar_t *result);

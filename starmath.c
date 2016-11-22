@@ -135,6 +135,19 @@ void sm_mul(struct eq_node *node, int flags, wchar_t *result)
         child = child->next;
     }
 
+    mul_to_str(flags, node->type, numerator, denom, result);
+
+    wcscat(result, close_bracket);
+}
+
+void mul_to_str(int flags, char type, wchar_t *numerator, wchar_t *denom, wchar_t *result)
+{
+    if (!(flags & FR_MUL && type == EQ_MUL)) {
+        wchar_t *tmp = denom;
+        denom     = numerator;
+        numerator = tmp;
+    }
+    
     if (*denom == 0) {
         wcscat(result, numerator);
     } else if (*numerator == 0) {
@@ -148,8 +161,6 @@ void sm_mul(struct eq_node *node, int flags, wchar_t *result)
         wcscat(result, denom);
         wcscat(result, L"}");
     }
-
-    wcscat(result, close_bracket);
 }
 
 
