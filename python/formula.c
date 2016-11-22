@@ -21,10 +21,16 @@ static PyObject * Formula_new(PyTypeObject *type, PyObject *args, PyObject *kwds
 }
 
 // init Formula after creation
-static int Formula_init(DatablockObject *self, PyObject *args, PyObject *kwds)
+static int Formula_init(FormulaObject *self, PyObject *args, PyObject *kwds)
 {
+    int type = EQ_SUMM;
+    static char *kwlist[] = {"type", NULL};
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "i", kwlist, &type))
+        return NULL;
+
     if(self != NULL)
-        self->formula = new DataBlock();
+        self->formula = eq_node_new(type, 1);
     
     return 0;
 }
@@ -44,7 +50,7 @@ static PyMemberDef Formula_members[] = {
 #define PyMODINIT_FUNC void
 #endif
 PyMODINIT_FUNC
-initformula(void) 
+initformula(void)
 {
     PyObject* m;
 
@@ -56,4 +62,15 @@ initformula(void)
 
     Py_INCREF(&FormulaType);
     PyModule_AddObject(m, "Formula", (PyObject *)&FormulaType);
+
+    PyModule_AddIntConstant(m, "EQ_SYMBOL", EQ_SYMBOL);
+    PyModule_AddIntConstant(m, "EQ_NUMBER", EQ_NUMBER);
+    PyModule_AddIntConstant(m, "EQ_SUMM", EQ_SUMM);
+    PyModule_AddIntConstant(m, "EQ_MUL", EQ_MUL);
+    PyModule_AddIntConstant(m, "EQ_RECIPROCAL", EQ_RECIPROCAL);
+    PyModule_AddIntConstant(m, "EQ_SIN", EQ_SIN);
+    PyModule_AddIntConstant(m, "EQ_COS", EQ_COS);
+    PyModule_AddIntConstant(m, "EQ_ASIN", EQ_ASIN);
+    PyModule_AddIntConstant(m, "EQ_ACOS", EQ_ACOS);
+    PyModule_AddIntConstant(m, "EQ_POW", EQ_POW);
 }

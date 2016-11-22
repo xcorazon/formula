@@ -6,7 +6,7 @@
 /*
  * Creation functions
  */
-struct eq_node * eq_node_new(unsigned char type, char sign);
+struct eq_node *eq_node_new(unsigned char type, char sign);
 struct eq_leaf *eq_leaf_new(unsigned char type, char sign, wchar_t *name, double val);
 
 /*
