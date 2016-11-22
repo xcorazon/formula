@@ -116,7 +116,7 @@ void sm_mul(struct eq_node *node, int flags, wchar_t *result)
     wcscpy(result, sign);
     wcscat(result, open_bracket);
 
-    int ts_flags = SM_ROUND_BRACKET & FR_MUL;
+    int ts_flags = SM_ROUND_BRACKET | FR_MUL;
     child = (struct eq_node *)node->first_child;
 
     wchar_t *ndot = L"";
@@ -131,8 +131,7 @@ void sm_mul(struct eq_node *node, int flags, wchar_t *result)
             wcscat(numerator, ndot);
             to_string[child->type]((struct eq_node *)child, ts_flags, numerator);
             ndot = dot;
-    }
-
+        }
         child = child->next;
     }
 
