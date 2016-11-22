@@ -144,7 +144,7 @@ void sm_mul(struct eq_node *node, int flags, wchar_t *result)
 
 void mul_to_str(int flags, char type, wchar_t *numerator, wchar_t *denom, wchar_t *result)
 {
-    if (!(flags & FR_MUL && type == EQ_MUL)) {
+    if (!(flags & FR_MUL) && type == EQ_RECIPROCAL) {
         wchar_t *tmp = denom;
         denom     = numerator;
         numerator = tmp;
