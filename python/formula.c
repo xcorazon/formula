@@ -1,7 +1,8 @@
 #include "formula.h"
-#include "structmember.h"
 #include "../eqtypes.h"
 #include "../common.h"
+#include "../starmath.h"
+#include "../debug/debug.h"
 
 
 // release memory 
@@ -26,25 +27,39 @@ static int Formula_init(FormulaObject *self, PyObject *args, PyObject *kwds)
 {
     int type = EQ_SUMM;
     static char *kwlist[] = {"type", NULL};
-
-    if (!PyArg_ParseTupleAndKeywords(args, kwds, "i", kwlist, &type))
-        return NULL;
-
-    if(self != NULL)
+    debug(L"type = %d", type);
+    if (!PyArg_ParseTupleAndKeywords(args, kwds, "|i", kwlist, &type))
+        return -1;
+    debug(L"type2 = %d", type);
+    if(self != NULL) {
         self->equation = eq_node_new(type, 1);
+        ((struct eq_node *)(self->equation))->first_child = eq_leaf_new(EQ_NUMBER, 1, NULL, 0);
+    }
     
     return 0;
 }
 
 
-
-static PyMethodDef module_methods[] = {
-    {NULL}  /* Sentinel */
-};
-
-static PyMemberDef Formula_members[] = {
-    {NULL}  /* Sentinel */
-};
+static PyObject *
+Formula_toStarMath(FormulaObject *self) 
+{
+    wchar_t star_math[1000];
+    PyObject *res = NULL;
+    
+    if(self != NULL) {
+        *star_math = 0;
+        sm_to_string((struct eq_node *)(self->equation), SM_DEFAULT, star_math);
+        debug(star_math);
+        res = PyUnicode_FromUnicode(star_math, (Py_ssize_t)wcslen(star_math));
+        
+        if(res == NULL)
+            Py_RETURN_NONE;
+        else
+            return res;
+    }
+    
+    return res;
+}
 
 
 #ifndef PyMODINIT_FUNC	/* declarations for DLL import/export */

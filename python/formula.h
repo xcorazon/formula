@@ -1,4 +1,5 @@
 ﻿#include <Python.h>
+#include "structmember.h"
 
 typedef struct {
     PyObject_HEAD
@@ -8,6 +9,22 @@ typedef struct {
 static void Formula_dealloc(FormulaObject *self);
 static PyObject * Formula_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
 static int Formula_init(FormulaObject *self, PyObject *args, PyObject *kwds);
+
+static PyObject *Formula_toStarMath(FormulaObject *self);
+
+static PyMethodDef module_methods[] = {
+    {NULL}  /* Sentinel */
+};
+
+static PyMethodDef Formula_memthods[] = {
+    {"toStarMath", (PyCFunction)Formula_toStarMath, METH_NOARGS, "Return StarMath view of the formula"},
+    {NULL}  /* Sentinel */
+};
+
+static PyMemberDef Formula_members[] = {
+    {NULL}  /* Sentinel */
+};
+
 
 static PyTypeObject FormulaType = {
     PyObject_HEAD_INIT(NULL)
@@ -38,8 +55,8 @@ static PyTypeObject FormulaType = {
     0,                           /* tp_weaklistoffset */
     0,                           /* tp_iter */
     0,                           /* tp_iternext */
-    0,                           /* tp_methods */
-    0,                           /* tp_members */
+    Formula_memthods,            /* tp_methods */
+    Formula_members,             /* tp_members */
     0,                           /* tp_getset */
     0,                           /* tp_base */
     0,                           /* tp_dict */

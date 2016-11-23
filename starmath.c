@@ -33,7 +33,7 @@ void sm_symbol(struct eq_node *node, int flags, wchar_t *result)
   if(node->sign < 0)
     sign = L"-";
 
-  wcscpy(result, sign);
+  wcscat(result, sign);
   wcscat(result, ((struct eq_leaf *)node)->name);
 }
 
@@ -49,7 +49,7 @@ void sm_number(struct eq_node *node, int flags, wchar_t *result)
   if(node->sign < 0)
     sign = L"-";
   
-  wcscpy(result, sign);
+  wcscat(result, sign);
   swprintf(tmp, 19, L"%.2f", ((struct eq_leaf *)node)->value);
   wchar_t *pos = wcsstr(tmp, L".00");
   if(pos != NULL)
@@ -242,5 +242,5 @@ void sm_asincos(struct eq_node *node, int flags, wchar_t *result)
 
 void sm_to_string(struct eq_node *node, int flags, wchar_t *result)
 {
-  
+  to_string[node->type](node, flags, result);
 }
