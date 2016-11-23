@@ -1,13 +1,14 @@
-#include <Python.h>
-#include "../eqtypes.h"
-
 #include "formula.h"
+#include "structmember.h"
+#include "../eqtypes.h"
+#include "../common.h"
+
 
 // release memory 
 static void Formula_dealloc(FormulaObject *self)
 {
-    if( self->formula != 0)
-        eq_delete(self->formula);
+    if( self->equation != 0)
+        eq_delete(self->equation);
     
     self->ob_type->tp_free((PyObject*)self);
 }
@@ -30,7 +31,7 @@ static int Formula_init(FormulaObject *self, PyObject *args, PyObject *kwds)
         return NULL;
 
     if(self != NULL)
-        self->formula = eq_node_new(type, 1);
+        self->equation = eq_node_new(type, 1);
     
     return 0;
 }
