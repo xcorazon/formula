@@ -15,6 +15,8 @@ static int Formula_init(FormulaObject *self, PyObject *args, PyObject *kwds);
  */
 static PyObject * Formula_sin(PyObject *self, PyObject *param);
 static PyObject * Formula_cos(PyObject *self, PyObject *param);
+static PyObject * Formula_asin(PyObject *self, PyObject *param);
+static PyObject * Formula_acos(PyObject *self, PyObject *param);
 
 /*
  * Formula functions
@@ -25,6 +27,8 @@ static PyObject *Formula_toStarMath(FormulaObject *self);
 static PyMethodDef module_methods[] = {
     {"sin", (PyCFunction)Formula_sin, METH_O, "Creates sinus formula type."},
     {"cos", (PyCFunction)Formula_cos, METH_O, "Creates cosinus formula type."},
+    {"asin", (PyCFunction)Formula_asin, METH_O, "Creates arcsinus formula type."},
+    {"acos", (PyCFunction)Formula_acos, METH_O, "Creates arccosinus formula type."},
     {NULL}  /* Sentinel */
 };
 

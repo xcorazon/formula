@@ -146,6 +146,26 @@ static PyObject * Formula_cos(PyObject *self, PyObject *param)
 }
 
 
+static PyObject * Formula_asin(PyObject *self, PyObject *param)
+{
+    FormulaObject *res = (FormulaObject *)Formula_sin(self, param);
+    if(res != NULL)
+      ((struct eq_node *)(res->equation))->type = EQ_ASIN;
+    
+    return (PyObject *)res;
+}
+
+
+static PyObject * Formula_acos(PyObject *self, PyObject *param)
+{
+    FormulaObject *res = (FormulaObject *)Formula_sin(self, param);
+    if(res != NULL)
+      ((struct eq_node *)(res->equation))->type = EQ_ACOS;
+    
+    return (PyObject *)res;
+}
+
+
 #ifndef PyMODINIT_FUNC /* declarations for DLL import/export */
 #define PyMODINIT_FUNC void
 #endif
