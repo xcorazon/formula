@@ -121,6 +121,16 @@ static PyObject * Formula_sin(PyObject *self, PyObject *param)
         return (PyObject *)result;
     }
     
+    if(PyObject_TypeCheck(param, &FormulaType)) {
+        result = (FormulaObject *)Formula_new(&FormulaType, Py_None, Py_None);
+        result->equation = eq_node_new(EQ_SIN, 1);
+        
+        struct eq_node *node = ((FormulaObject *)param)->equation;
+        ((struct eq_node *)(result->equation))->first_child = eq_clone(node);
+        
+        return (PyObject *)result;
+    }
+    
     PyErr_SetString(PyExc_ValueError, "Invalid argument.");
     return NULL;
 }
