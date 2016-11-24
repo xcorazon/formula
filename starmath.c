@@ -168,13 +168,13 @@ void mul_to_str(int flags, char type, wchar_t *numerator, wchar_t *denom, wchar_
 
 void sm_sincos(struct eq_node *node, int flags, wchar_t *result)
 {
-    wchar_t *open_bracket = L"left (";
-    wchar_t *close_bracket = L"right )";
+    wchar_t *open_bracket = L" left (";
+    wchar_t *close_bracket = L" right )";
     
     struct eq_node *child = (struct eq_node *)node->first_child;
     
     if ((child->type == EQ_SYMBOL || child->type == EQ_NUMBER) && child->sign > 0) {
-        open_bracket = L"{";
+        open_bracket = L" {";
         close_bracket = L"}";
     }
     
@@ -188,9 +188,9 @@ void sm_sincos(struct eq_node *node, int flags, wchar_t *result)
     
     wcscat(result, sign);
     if(node->type == EQ_SIN)
-        wcscat(result, L"sin ");
+        wcscat(result, L"sin");
     else
-        wcscat(result, L"cos ");
+        wcscat(result, L"cos");
     wcscat(result, open_bracket);
     
     
