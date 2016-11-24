@@ -10,9 +10,21 @@ static void Formula_dealloc(FormulaObject *self);
 static PyObject * Formula_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
 static int Formula_init(FormulaObject *self, PyObject *args, PyObject *kwds);
 
+/*
+ * module functions
+ */
+static PyObject * Formula_sin(PyObject *self, PyObject *param);
+static PyObject * Formula_cos(PyObject *self, PyObject *param);
+
+/*
+ * Formula functions
+ */
+ 
 static PyObject *Formula_toStarMath(FormulaObject *self);
 
 static PyMethodDef module_methods[] = {
+    {"sin", (PyCFunction)Formula_sin, METH_O, "Creates sinus formula type."},
+    {"cos", (PyCFunction)Formula_cos, METH_O, "Creates cosinus formula type."},
     {NULL}  /* Sentinel */
 };
 

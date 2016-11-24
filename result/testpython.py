@@ -6,4 +6,9 @@ a = formula.Formula(type=formula.EQ_SIN)
 print a
 print a.toStarMath()
 
+b=formula.sin('%ialpha')
+print b.toStarMath()
+c=formula.cos(-10)
+print c.toStarMath()
+
 print "EQ_COS = %d" % formula.EQ_COS

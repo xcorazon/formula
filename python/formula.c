@@ -5,6 +5,10 @@
 #include "../debug/debug.h"
 
 
+#ifdef OS_WINDOWS
+  #define swprintf _snwprintf
+#endif
+
 // release memory 
 static void Formula_dealloc(FormulaObject *self)
 {
@@ -27,10 +31,9 @@ static int Formula_init(FormulaObject *self, PyObject *args, PyObject *kwds)
 {
     int type = EQ_SUMM;
     static char *kwlist[] = {"type", NULL};
-    debug(L"type = %d", type);
     if (!PyArg_ParseTupleAndKeywords(args, kwds, "|i", kwlist, &type))
         return -1;
-    debug(L"type2 = %d", type);
+
     if(self != NULL) {
         self->equation = eq_node_new(type, 1);
         ((struct eq_node *)(self->equation))->first_child = eq_leaf_new(EQ_NUMBER, 1, NULL, 0);
@@ -49,7 +52,7 @@ Formula_toStarMath(FormulaObject *self)
     if(self != NULL) {
         *star_math = 0;
         sm_to_string((struct eq_node *)(self->equation), SM_DEFAULT, star_math);
-        debug(star_math);
+
         res = PyUnicode_FromUnicode(star_math, (Py_ssize_t)wcslen(star_math));
         
         if(res == NULL)
@@ -62,7 +65,78 @@ Formula_toStarMath(FormulaObject *self)
 }
 
 
-#ifndef PyMODINIT_FUNC	/* declarations for DLL import/export */
+/*
+ * Module functions
+ */
+static PyObject * Formula_sin(PyObject *self, PyObject *param)
+{
+    wchar_t variable[1000];
+    char is_num = 0;
+    char sign   = 1;
+    double num  = 0.0;
+    
+    FormulaObject *result;
+    
+    memset(variable, 0, 1000 * sizeof(wchar_t));
+    
+    if(PyUnicode_Check(param)) {
+        if (PyUnicode_AsWideChar((PyUnicodeObject *)param, variable, 100) < 0) {
+            PyErr_SetString(PyExc_ValueError, "Error in copy unicode string.");
+            return NULL;
+        }
+    }
+    
+    if(PyString_CheckExact(param)) {
+        char *str = PyString_AsString(param);
+        swprintf(variable, 100, L"%hs", str);
+    }
+    
+    if(*variable != 0) {
+        result = (FormulaObject *)Formula_new(&FormulaType, Py_None, Py_None);
+        result->equation = eq_node_new(EQ_SIN, 1);
+        ((struct eq_node *)(result->equation))->first_child = eq_leaf_new(EQ_SYMBOL, 1, variable, 0);
+        
+        return (PyObject *)result;
+    }
+    
+    if(PyFloat_Check(param)) {
+        num = PyFloat_AsDouble(param);
+        
+        if (num < 0) sign = -1;
+        is_num = 1;
+        
+    }
+    
+    if(PyInt_Check(param) || PyLong_Check(param)) {
+        num = (double)PyInt_AS_LONG(param);
+        if (num < 0) sign = -1;
+        is_num = 1;
+    }
+    
+    if(is_num) {
+        result = (FormulaObject *)Formula_new(&FormulaType, Py_None, Py_None);
+        result->equation = eq_node_new(EQ_SIN, 1);
+        ((struct eq_node *)(result->equation))->first_child = eq_leaf_new(EQ_NUMBER, sign, NULL, sign*num );
+        
+        return (PyObject *)result;
+    }
+    
+    PyErr_SetString(PyExc_ValueError, "Invalid argument.");
+    return NULL;
+}
+
+
+static PyObject * Formula_cos(PyObject *self, PyObject *param)
+{
+    FormulaObject *res = (FormulaObject *)Formula_sin(self, param);
+    if(res != NULL)
+      ((struct eq_node *)(res->equation))->type = EQ_COS;
+    
+    return (PyObject *)res;
+}
+
+
+#ifndef PyMODINIT_FUNC /* declarations for DLL import/export */
 #define PyMODINIT_FUNC void
 #endif
 PyMODINIT_FUNC
