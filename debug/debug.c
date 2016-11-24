@@ -32,7 +32,7 @@ void debug(wchar_t *fmt,...)
   FILE *fp;
   fp = fopen("slog.txt", "a");
   if(fp) {
-    wcscat(buf, "\n");
+    wcscat(buf, L"\n");
     fwprintf(fp, buf);
     fclose(fp);
   }
