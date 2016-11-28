@@ -1,6 +1,7 @@
 #include "formula.h"
 #include "../eqtypes.h"
 #include "../common.h"
+#include "../mul.h"
 #include "../starmath.h"
 #include "../debug/debug.h"
 
@@ -42,7 +43,9 @@ static int Formula_init(FormulaObject *self, PyObject *args, PyObject *kwds)
     return 0;
 }
 
-
+/*
+ * Formula functions
+ */
 static PyObject *
 Formula_toStarMath(FormulaObject *self) 
 {
@@ -62,6 +65,33 @@ Formula_toStarMath(FormulaObject *self)
     }
     
     return res;
+}
+
+
+static PyObject *Formula_mulout(FormulaObject *self)
+{
+    if(self != NULL)
+        eq_move_multipliers_out((struct eq_node **)&self->equation);
+    
+    return 0;
+}
+
+
+static PyObject *Formula_mulin(FormulaObject *self)
+{
+    return 0;
+}
+
+
+static PyObject *Formula_transform(FormulaObject *self)
+{
+    return 0;
+}
+
+
+static PyObject *Formula_calculate(FormulaObject *self)
+{
+    return 0;
 }
 
 

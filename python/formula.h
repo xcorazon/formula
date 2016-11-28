@@ -23,6 +23,10 @@ static PyObject * Formula_acos(PyObject *self, PyObject *param);
  */
  
 static PyObject *Formula_toStarMath(FormulaObject *self);
+static PyObject *Formula_mulout(FormulaObject *self);
+static PyObject *Formula_mulin(FormulaObject *self);
+static PyObject *Formula_transform(FormulaObject *self);
+static PyObject *Formula_calculate(FormulaObject *self);
 
 static PyMethodDef module_methods[] = {
     {"sin", (PyCFunction)Formula_sin, METH_O, "Creates sinus formula type."},
@@ -34,6 +38,10 @@ static PyMethodDef module_methods[] = {
 
 static PyMethodDef Formula_memthods[] = {
     {"toStarMath", (PyCFunction)Formula_toStarMath, METH_NOARGS, "Return StarMath view of the formula"},
+    {"multipliersOut", (PyCFunction)Formula_mulout, METH_NOARGS, "Moves multipliers out the brackets."},
+    {"multipliersIn", (PyCFunction)Formula_mulin, METH_NOARGS, "Moves multipliers out the brackets."},
+    {"transform", (PyCFunction)Formula_transform, METH_NOARGS, "Transforms equation if it is possible."},
+    {"calculate", (PyCFunction)Formula_calculate, METH_NOARGS, "Calculate number expressions if it is possible."},
     {NULL}  /* Sentinel */
 };
 
