@@ -10,4 +10,6 @@ void eq_calculate_mul(struct eq_node **node);
 void div_symbols(struct eq_node *mul);
 void eq_transform_mul(void **mul);
 
+void eq_move_multipliers_out(struct eq_node **node);
+
 #endif /* MUL_H */

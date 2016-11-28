@@ -71,10 +71,10 @@ int main(int argc, char *argv[])
 
   struct eq_node *multiplier = eq_find_common_mul(summ);
   wprintf(L"\nfinded common multiplier...\n");
-  if(multiplier != NULL) {
-    eq_move_multiplier_out(&summ, multiplier);
-    wprintf(L"\nmultiplier moved out...\n");
-  }
+  
+  eq_move_multipliers_out(&summ);
+  wprintf(L"\nmultiplier moved out...\n");
+
   *treeview_result = 0;
   tree_view(summ, 0, treeview_result);
   wprintf(L"\nAfter move multiplier\n%s", treeview_result);

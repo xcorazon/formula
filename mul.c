@@ -295,3 +295,26 @@ void eq_transform_mul(void **mul)
 ret:
   return;
 }
+
+
+void eq_move_multipliers_out(struct eq_node **node)
+{
+    if(eq_is_leaf(*node))
+        goto ret;
+    
+    struct eq_node *mul = eq_find_common_mul(*node);
+    
+    if(mul != NULL) {
+        eq_move_multiplier_out(node, mul);
+        eq_transform_mul(node);
+    }
+    
+    struct eq_node **child = (struct eq_node **)&((*node)->first_child);
+    while(*child != NULL) {
+        eq_move_multipliers_out(child);
+        child = (struct eq_node **)&(*child)->next;
+    }
+    
+ret:
+    return;
+}
