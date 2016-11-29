@@ -8,7 +8,8 @@ print a.toStarMath()
 
 b=formula.sin('%ialpha')
 print b.toStarMath()
-c=formula.cos(b) + "a_1"+"c_2"-5.1 * b
+c=(formula.cos(b) + "a_1"+"c_2"-5.1)
+c /= b + 3.5
 
 print c.toStarMath()
 

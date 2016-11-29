@@ -237,6 +237,40 @@ static PyObject *Formula_NMul(PyObject *o1, PyObject *o2)
 }
 
 
+static PyObject *Formula_NDiv(PyObject *o1, PyObject *o2)
+{
+    struct eq_node *obj1;
+    struct eq_node *obj2;
+    struct eq_node *div;
+    FormulaObject *result;
+    
+    obj1 = getEquation(o1);
+    obj2 = getEquation(o2);
+    
+    if(obj1 == NULL || obj2 == NULL) {
+        if(obj1 != NULL)
+            eq_delete(obj1);
+        if(obj2 != NULL)
+            eq_delete(obj2);
+      
+        PyErr_SetString(PyExc_ValueError, "Invalid arguments.\nArguments must be <int>, <float>, <string> or <Formula>.");
+        return NULL;
+    }
+    
+    result = (FormulaObject *)Formula_new(&FormulaType, Py_None, Py_None);
+    result->equation = eq_node_new(EQ_MUL, 1);
+    
+    div = eq_node_new(EQ_RECIPROCAL, 1);
+    div->first_child = obj2;
+    
+    obj1->next = div;
+    ((struct eq_node *)(result->equation))->first_child = obj1;
+    eq_transform(&result->equation);
+    
+    return (PyObject *)result;
+}
+
+
 /*
  * Module functions
  */

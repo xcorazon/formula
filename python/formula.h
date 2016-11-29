@@ -34,6 +34,7 @@ static PyObject *Formula_calculate(FormulaObject *self);
 static PyObject *Formula_NAdd(PyObject *o1, PyObject *o2);
 static PyObject *Formula_NSub(PyObject *o1, PyObject *o2);
 static PyObject *Formula_NMul(PyObject *o1, PyObject *o2);
+static PyObject *Formula_NDiv(PyObject *o1, PyObject *o2);
 
 static PyMethodDef module_methods[] = {
     {"sin", (PyCFunction)Formula_sin, METH_O, "Creates sinus formula type."},
@@ -56,7 +57,7 @@ static PyNumberMethods Formula_NProtocol = {
     Formula_NAdd,       /* binaryfunc nb_add; */
     Formula_NSub,       /* binaryfunc nb_subtract; */
     Formula_NMul,       /* binaryfunc nb_multiply; */
-    0,                  /* binaryfunc nb_divide; */
+    Formula_NDiv,       /* binaryfunc nb_divide; */
     0,                  /* binaryfunc nb_remainder; */
     0,                  /* binaryfunc nb_divmod; */
     0,                  /* ternaryfunc nb_power; */
@@ -78,10 +79,10 @@ static PyNumberMethods Formula_NProtocol = {
     0,                  /* unaryfunc nb_hex; */
 
     /* Added in release 2.0 */
-    0,                  /* binaryfunc nb_inplace_add; */
-    0,                  /* binaryfunc nb_inplace_subtract; */
-    0,                  /* binaryfunc nb_inplace_multiply; */
-    0,                  /* binaryfunc nb_inplace_divide; */
+    Formula_NAdd,       /* binaryfunc nb_inplace_add; */
+    Formula_NSub,       /* binaryfunc nb_inplace_subtract; */
+    Formula_NMul,       /* binaryfunc nb_inplace_multiply; */
+    Formula_NDiv,       /* binaryfunc nb_inplace_divide; */
     0,                  /* binaryfunc nb_inplace_remainder; */
     0,                  /* ternaryfunc nb_inplace_power; */
     0,                  /* binaryfunc nb_inplace_lshift; */
