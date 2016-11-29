@@ -8,7 +8,8 @@ print a.toStarMath()
 
 b=formula.sin('%ialpha')
 print b.toStarMath()
-c=formula.cos(b)
+c=formula.cos(b) + "a_1"+"c_2"-5.1 * b
+
 print c.toStarMath()
 
 print "EQ_COS = %d" % formula.EQ_COS

@@ -2,6 +2,7 @@
 #include "../eqtypes.h"
 #include "../common.h"
 #include "../mul.h"
+#include "../transform.h"
 #include "../starmath.h"
 #include "../debug/debug.h"
 
@@ -92,6 +93,147 @@ static PyObject *Formula_transform(FormulaObject *self)
 static PyObject *Formula_calculate(FormulaObject *self)
 {
     return 0;
+}
+
+/*
+ * Number protocol functions
+ */
+
+struct eq_node *getEquation(PyObject *param)
+{
+    wchar_t tmp[100];
+    double num = 0.0;
+    char sign = 1;
+    char is_num = 0;
+    *tmp = 0;
+    
+    if(PyObject_TypeCheck(param, &FormulaType)) {
+      struct eq_node *node = ((FormulaObject *)param)->equation;
+      
+      return (struct eq_node *)eq_clone(node);
+    }
+    
+    if(PyUnicode_Check(param)) {
+        if (PyUnicode_AsWideChar((PyUnicodeObject *)param, tmp, 100) < 0) 
+            return NULL;
+        
+        return (struct eq_node *)eq_leaf_new(EQ_SYMBOL, 1, tmp, 0);
+    }
+    
+    if(PyString_CheckExact(param)) {
+        char *str = PyString_AsString(param);
+        swprintf(tmp, 100, L"%hs", str);
+        
+        return (struct eq_node *)eq_leaf_new(EQ_SYMBOL, 1, tmp, 0);
+    }
+    
+    if(PyFloat_Check(param)) {
+        num = PyFloat_AsDouble(param);
+        if (num < 0) sign = -1;
+        is_num = 1;
+    }
+    
+    if(PyInt_Check(param) || PyLong_Check(param)) {
+        num = (double)PyInt_AS_LONG(param);
+        if (num < 0) sign = -1;
+        is_num = 1;
+    }
+    
+    if(is_num) 
+        return (struct eq_node *)eq_leaf_new(EQ_NUMBER, sign, NULL, sign*num );
+
+    return NULL;
+}
+
+
+static PyObject *Formula_NAdd(PyObject *o1, PyObject *o2)
+{
+    struct eq_node *obj1;
+    struct eq_node *obj2;
+    FormulaObject *result;
+    
+    obj1 = getEquation(o1);
+    obj2 = getEquation(o2);
+    
+    if(obj1 == NULL || obj2 == NULL) {
+        if(obj1 != NULL)
+            eq_delete(obj1);
+        if(obj2 != NULL)
+            eq_delete(obj2);
+      
+        PyErr_SetString(PyExc_ValueError, "Invalid arguments.\nArguments must be <int>, <float>, <string> or <Formula>.");
+        return NULL;
+    }
+    
+    result = (FormulaObject *)Formula_new(&FormulaType, Py_None, Py_None);
+    result->equation = eq_node_new(EQ_SUMM, 1);
+    
+    obj1->next = obj2;
+    ((struct eq_node *)(result->equation))->first_child = obj1;
+    eq_transform(&result->equation);
+    
+    return (PyObject *)result;
+}
+
+
+static PyObject *Formula_NSub(PyObject *o1, PyObject *o2)
+{
+    struct eq_node *obj1;
+    struct eq_node *obj2;
+    FormulaObject *result;
+    
+    obj1 = getEquation(o1);
+    obj2 = getEquation(o2);
+    
+    if(obj1 == NULL || obj2 == NULL) {
+        if(obj1 != NULL)
+            eq_delete(obj1);
+        if(obj2 != NULL)
+            eq_delete(obj2);
+      
+        PyErr_SetString(PyExc_ValueError, "Invalid arguments.\nArguments must be <int>, <float>, <string> or <Formula>.");
+        return NULL;
+    }
+    
+    result = (FormulaObject *)Formula_new(&FormulaType, Py_None, Py_None);
+    result->equation = eq_node_new(EQ_SUMM, 1);
+    
+    obj2->sign *= -1;
+    obj1->next = obj2;
+    ((struct eq_node *)(result->equation))->first_child = obj1;
+    eq_transform(&result->equation);
+    
+    return (PyObject *)result;
+}
+
+
+static PyObject *Formula_NMul(PyObject *o1, PyObject *o2)
+{
+    struct eq_node *obj1;
+    struct eq_node *obj2;
+    FormulaObject *result;
+    
+    obj1 = getEquation(o1);
+    obj2 = getEquation(o2);
+    
+    if(obj1 == NULL || obj2 == NULL) {
+        if(obj1 != NULL)
+            eq_delete(obj1);
+        if(obj2 != NULL)
+            eq_delete(obj2);
+      
+        PyErr_SetString(PyExc_ValueError, "Invalid arguments.\nArguments must be <int>, <float>, <string> or <Formula>.");
+        return NULL;
+    }
+    
+    result = (FormulaObject *)Formula_new(&FormulaType, Py_None, Py_None);
+    result->equation = eq_node_new(EQ_MUL, 1);
+    
+    obj1->next = obj2;
+    ((struct eq_node *)(result->equation))->first_child = obj1;
+    eq_transform(&result->equation);
+    
+    return (PyObject *)result;
 }
 
 
