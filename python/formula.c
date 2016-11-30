@@ -171,6 +171,7 @@ static PyObject *Formula_NAdd(PyObject *o1, PyObject *o2)
     obj1->next = obj2;
     ((struct eq_node *)(result->equation))->first_child = obj1;
     eq_transform(&result->equation);
+    eq_transform(&result->equation);
     
     return (PyObject *)result;
 }
@@ -202,6 +203,7 @@ static PyObject *Formula_NSub(PyObject *o1, PyObject *o2)
     obj1->next = obj2;
     ((struct eq_node *)(result->equation))->first_child = obj1;
     eq_transform(&result->equation);
+    eq_transform(&result->equation);
     
     return (PyObject *)result;
 }
@@ -231,6 +233,7 @@ static PyObject *Formula_NMul(PyObject *o1, PyObject *o2)
     
     obj1->next = obj2;
     ((struct eq_node *)(result->equation))->first_child = obj1;
+    eq_transform(&result->equation);
     eq_transform(&result->equation);
     
     return (PyObject *)result;
@@ -265,6 +268,7 @@ static PyObject *Formula_NDiv(PyObject *o1, PyObject *o2)
     
     obj1->next = div;
     ((struct eq_node *)(result->equation))->first_child = obj1;
+    eq_transform(&result->equation);
     eq_transform(&result->equation);
     
     return (PyObject *)result;
