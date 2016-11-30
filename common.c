@@ -271,23 +271,21 @@ ret:
  */
 void eq_move_children(struct eq_node *node1, struct eq_node *node2)
 {
-    struct eq_node *child = node1->first_child;
-    if(child == NULL)
-        return;
+    struct eq_node **free_element = &node1->first_child;
   
-    while(child->next != NULL)
-        child = child->next;
+    while(*free_element != NULL)
+        free_element = (struct eq_node **)&(*free_element)->next;
   
     if(node2->type == EQ_SUMM) {
         eq_move_sign_in(node2);
-        child->next = node2->first_child;
+        *free_element = node2->first_child;
         node2->first_child = NULL;
     } else if(node2->type == EQ_MUL || node2->type == EQ_RECIPROCAL) {
         ((struct eq_node *)node2->first_child)->sign *= node2->sign;
-        child->next = node2->first_child;
+        *free_element = node2->first_child;
         node2->first_child = NULL;
     } else {
-        child->next = node2;
+        *free_element = node2;
     }
 }
 
