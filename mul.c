@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <math.h>
 #include "mul.h"
+#include "reciprocal.h"
 #include "summ.h"
 #include "eqtypes.h"
 #include "common.h"
@@ -142,28 +143,24 @@ void eq_combine_mul(struct eq_node *node)
   if(eq_children_count(node) == 0)
     return;
   
-  struct eq_node *child = node->first_child;
-  struct eq_node **prev = (struct eq_node **)(&node->first_child);
+  struct eq_node **element = (struct eq_node **)&node->first_child;
   
-  while(child != NULL) {
-    eq_combine_mul(child);
-    child = child->next;
+  while(*element != NULL) {
+    eq_combine_mul(*element);
+    element = (struct eq_node **)&(*element)->next;
   }
   
-  child = node->first_child;
+  element = (struct eq_node **)&node->first_child;;
   
   if(node->type == EQ_MUL) {
-    while(child != NULL) {
-      if(child->type == EQ_MUL) {
-        eq_move_children(node, child);
-        *prev = child->next;
-        eq_delete(child);
-        child = *prev;
+    eq_combine_recip(node);
+    while(*element != NULL) {
+      if((*element)->type == EQ_MUL) {
+        eq_move_children(node, *element);
+        *element = eq_delete(*element);
         continue;
       }
-      
-      prev = (struct eq_node **)&child->next;
-      child = child->next;
+      element = (struct eq_node **)&(*element)->next;
     }
   }
 }

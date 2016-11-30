@@ -29,13 +29,14 @@ void eq_combine_recip(struct eq_node *mul)
     goto ret;
   
   child = recip->next;
-  while(child != NULL) {
-    if(child->type == EQ_RECIPROCAL) {
-      eq_move_children(recip, child);
-      child = eq_delete(child);
+  struct eq_node **element = &recip->next;
+  while(*element != NULL) {
+    if((*element)->type == EQ_RECIPROCAL) {
+      eq_move_children(recip, *element);
+      *element = eq_delete(*element);
       continue;
     }
-    child = child->next;
+    element = (struct eq_node **)&(*element)->next;
   }
   
 ret:
@@ -119,6 +120,10 @@ void eq_transform_reciprocal(void **rec)
     
     if(child->type == EQ_RECIPROCAL) {
         ((struct eq_node *)(*rec))->type = EQ_MUL;
+        eq_move_children(*rec, child);
+        ((struct eq_node *)(*rec))->first_child = eq_delete(child);
+        
+    } else if(child->type == EQ_MUL) {
         eq_move_children(*rec, child);
         ((struct eq_node *)(*rec))->first_child = eq_delete(child);
     }
