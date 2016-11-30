@@ -118,10 +118,9 @@ void eq_transform_reciprocal(void **rec)
     child = ((struct eq_node *)*rec)->first_child;
     
     if(child->type == EQ_RECIPROCAL) {
-      struct eq_node *mul = eq_node_new(EQ_MUL, 1);
-      eq_move_children(mul, child);
-      mul->next = eq_delete(*rec);
-      *rec = mul;
+        ((struct eq_node *)(*rec))->type = EQ_MUL;
+        eq_move_children(*rec, child);
+        ((struct eq_node *)(*rec))->first_child = eq_delete(child);
     }
     goto ret;
   }
