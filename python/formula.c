@@ -372,6 +372,68 @@ static PyObject * Formula_acos(PyObject *self, PyObject *param)
 }
 
 
+static PyObject * Formula_symbol(PyObject *self, PyObject *args, PyObject *kwargs)
+{
+    PyObject *name;
+    int sign = 1;
+    wchar_t sym_name[1000];
+    *sym_name = 0;
+    
+    FormulaObject *result;
+    
+    static char *kwlist[]={"name", "sign", NULL};
+    
+    if(!PyArg_ParseTupleAndKeywords(args, kwargs, "O|i", kwlist, &name, &sign)) {
+        PyErr_SetString(PyExc_ValueError, "Invalid arguments. \"name\"=<string>, \"sign\" = optional <int>.");
+        return NULL;
+    }
+    
+    if(PyUnicode_Check(name)) {
+        if (PyUnicode_AsWideChar((PyUnicodeObject *)name, sym_name, 100) < 0) {
+            PyErr_SetString(PyExc_ValueError, "Invalid unicode string.");
+            return NULL;
+        }
+        
+    } else if(PyString_CheckExact(name)) {
+        char *str = PyString_AsString(name);
+        swprintf(sym_name, 100, L"%hs", str);
+        
+    } else {
+        PyErr_SetString(PyExc_ValueError, "Invalid arguments. \"name\"=<string>, \"sign\" = optional <int>.");
+        return NULL;
+    }
+    
+    result = (FormulaObject *)Formula_new(&FormulaType, Py_None, Py_None);
+    result->equation = eq_leaf_new(EQ_SYMBOL, sign, sym_name, 0);
+    
+    return (PyObject *)result;
+}
+
+
+static PyObject * Formula_number(PyObject *self, PyObject *param)
+{
+    double num = 0.0;
+    char sign = 1;
+    FormulaObject *result;
+    
+    if(PyFloat_Check(param)) {
+        num = PyFloat_AsDouble(param);
+        if (num < 0) sign = -1;
+    } else if(PyInt_Check(param) || PyLong_Check(param)) {
+        num = (double)PyInt_AS_LONG(param);
+        if (num < 0) sign = -1;
+    } else {
+        PyErr_SetString(PyExc_ValueError, "Invalid argument.");
+        return NULL;
+    }
+    
+    result = (FormulaObject *)Formula_new(&FormulaType, Py_None, Py_None);
+    result->equation = eq_leaf_new(EQ_NUMBER, sign, NULL, sign*num );
+    
+    return (PyObject *)result;
+}
+
+
 #ifndef PyMODINIT_FUNC /* declarations for DLL import/export */
 #define PyMODINIT_FUNC void
 #endif

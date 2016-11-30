@@ -17,6 +17,8 @@ static PyObject * Formula_sin(PyObject *self, PyObject *param);
 static PyObject * Formula_cos(PyObject *self, PyObject *param);
 static PyObject * Formula_asin(PyObject *self, PyObject *param);
 static PyObject * Formula_acos(PyObject *self, PyObject *param);
+static PyObject * Formula_symbol(PyObject *self, PyObject *args, PyObject *kwargs);
+static PyObject * Formula_number(PyObject *self, PyObject *param);
 
 /*
  * Formula functions
@@ -41,6 +43,8 @@ static PyMethodDef module_methods[] = {
     {"cos", (PyCFunction)Formula_cos, METH_O, "Creates cosinus formula type."},
     {"asin", (PyCFunction)Formula_asin, METH_O, "Creates arcsinus formula type."},
     {"acos", (PyCFunction)Formula_acos, METH_O, "Creates arccosinus formula type."},
+    {"symbol", (PyCFunction)Formula_symbol, METH_VARARGS | METH_KEYWORDS, "Converts string to formula.symbol."},
+    {"number", (PyCFunction)Formula_number, METH_O, "Converts number to formula.number."},
     {NULL}  /* Sentinel */
 };
 
