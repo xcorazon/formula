@@ -387,3 +387,12 @@ void *eq_find_common_mul(struct eq_node *node)
 ret:
     return NULL;
 }
+
+/*
+ * Add node to other node
+ */
+void eq_connect_node(struct eq_node *parent, struct eq_node *node)
+{
+  node->next = parent->first_child;
+  parent->first_child = node;
+}

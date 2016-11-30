@@ -36,5 +36,6 @@ void eq_move_sign_in(struct eq_node *node);
 void eq_remove_child(struct eq_node *node, struct eq_node *rem);
 void *eq_find(struct eq_node *node, struct eq_node *equation);
 void *eq_find_common_mul(struct eq_node *node);
+void eq_connect_node(struct eq_node *parent, struct eq_node *node);
 
 #endif /* COMMON_H */
