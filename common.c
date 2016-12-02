@@ -391,6 +391,6 @@ ret:
  */
 void eq_connect_node(struct eq_node *parent, struct eq_node *node)
 {
-  node->next = parent->first_child;
-  parent->first_child = node;
+    node->next = parent->first_child;
+    parent->first_child = node;
 }

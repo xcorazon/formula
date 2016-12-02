@@ -7,7 +7,7 @@
 #include "common.h"
 
 #ifdef OS_WINDOWS
-  #define swprintf _snwprintf
+    #define swprintf _snwprintf
 #endif /* OS_WINDOWS */
 
 
@@ -27,65 +27,65 @@ static void (* to_string[])(struct eq_node *node, int flags, wchar_t *result) = 
 
 void sm_symbol(struct eq_node *node, int flags, wchar_t *result)
 {
-  wchar_t *sign = L"";
-  if((flags & SM_SHOW_SIGN) != 0)
-    sign = L"+";
-  if(node->sign < 0)
-    sign = L"-";
+    wchar_t *sign = L"";
+    if((flags & SM_SHOW_SIGN) != 0)
+        sign = L"+";
+    if(node->sign < 0)
+        sign = L"-";
 
-  wcscat(result, sign);
-  wcscat(result, ((struct eq_leaf *)node)->name);
+    wcscat(result, sign);
+    wcscat(result, ((struct eq_leaf *)node)->name);
 }
 
 
 void sm_number(struct eq_node *node, int flags, wchar_t *result)
 {
-  wchar_t *sign = L"";
-  wchar_t tmp[20];
-  *tmp = 0;
-  
-  if((flags & SM_SHOW_SIGN) != 0)
-    sign = L"+";
-  if(node->sign < 0)
-    sign = L"-";
-  
-  wcscat(result, sign);
-  swprintf(tmp, 19, L"%.2f", ((struct eq_leaf *)node)->value);
-  wchar_t *pos = wcsstr(tmp, L".00");
-  if(pos != NULL)
-    *pos = L'\0';
-  wcscat(result, tmp);
+    wchar_t *sign = L"";
+    wchar_t tmp[20];
+    *tmp = 0;
+    
+    if((flags & SM_SHOW_SIGN) != 0)
+        sign = L"+";
+    if(node->sign < 0)
+        sign = L"-";
+    
+    wcscat(result, sign);
+    swprintf(tmp, 19, L"%.2f", ((struct eq_leaf *)node)->value);
+    wchar_t *pos = wcsstr(tmp, L".00");
+    if(pos != NULL)
+        *pos = L'\0';
+    wcscat(result, tmp);
 }
 
 void sm_summ(struct eq_node *node, int flags, wchar_t *result)
 {
-  wchar_t tmp[1000];
-  wchar_t *open_bracket = L"{";
-  wchar_t *close_bracket = L"}";
-  *tmp = 0;
-  wchar_t *sign = L"";
-  if((flags & SM_SHOW_SIGN) != 0)
-    sign = L"+";
-  if(node->sign < 0)
-    sign = L"-";
-  if(node->sign < 0 || (flags & SM_ROUND_BRACKET) != 0) {
-    open_bracket  = L" left (";
-    close_bracket = L" right )";
-  }
-  wcscat(result, sign);
-  wcscat(result, open_bracket);
-  
-  int ts_flags = SM_DEFAULT & FR_SUMM;
-  struct eq_node *child = (struct eq_node *)node->first_child;
-  while(child != NULL) {
-    tmp[0] = 0;
-    to_string[child->type]((struct eq_node *)child, ts_flags, tmp);
-    wcscat(result, tmp);
-    ts_flags = SM_SHOW_SIGN;
-    child = (struct eq_node *)child->next;
-  }
-  
-  wcscat(result, close_bracket);
+    wchar_t tmp[1000];
+    wchar_t *open_bracket = L"{";
+    wchar_t *close_bracket = L"}";
+    *tmp = 0;
+    wchar_t *sign = L"";
+    if((flags & SM_SHOW_SIGN) != 0)
+        sign = L"+";
+    if(node->sign < 0)
+        sign = L"-";
+    if(node->sign < 0 || (flags & SM_ROUND_BRACKET) != 0) {
+        open_bracket  = L" left (";
+        close_bracket = L" right )";
+    }
+    wcscat(result, sign);
+    wcscat(result, open_bracket);
+    
+    int ts_flags = SM_DEFAULT & FR_SUMM;
+    struct eq_node *child = (struct eq_node *)node->first_child;
+    while(child != NULL) {
+        tmp[0] = 0;
+        to_string[child->type]((struct eq_node *)child, ts_flags, tmp);
+        wcscat(result, tmp);
+        ts_flags = SM_SHOW_SIGN;
+        child = (struct eq_node *)child->next;
+    }
+    
+    wcscat(result, close_bracket);
 }
 
 void sm_mul(struct eq_node *node, int flags, wchar_t *result)
@@ -242,5 +242,5 @@ void sm_asincos(struct eq_node *node, int flags, wchar_t *result)
 
 void sm_to_string(struct eq_node *node, int flags, wchar_t *result)
 {
-  to_string[node->type](node, flags, result);
+    to_string[node->type](node, flags, result);
 }
