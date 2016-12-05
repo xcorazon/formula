@@ -71,34 +71,45 @@ Formula_toStarMath(FormulaObject *self)
 
 static PyObject *Formula_mulout(FormulaObject *self)
 {
-    if(self != NULL)
+    if(self != NULL) {
         eq_move_multipliers_out((struct eq_node **)&self->equation);
+        Py_RETURN_TRUE;
+    }
     
-    Py_RETURN_TRUE;
+    return NULL;
 }
 
 
 static PyObject *Formula_mulin(FormulaObject *self)
 {
-    return 0;
+    if(self != NULL) {
+        eq_move_multiplier_in((struct eq_node **)&self->equation);
+        Py_RETURN_TRUE;
+    }
+    
+    return NULL;
 }
 
 
 static PyObject *Formula_transform(FormulaObject *self)
 {
-    if(self != NULL)
+    if(self != NULL) {
         eq_transform(&self->equation);
-
-    Py_RETURN_TRUE;
+        Py_RETURN_TRUE;
+    }
+    
+    return NULL;
 }
 
 
 static PyObject *Formula_calculate(FormulaObject *self)
 {
-    if(self != NULL)
+    if(self != NULL) {
         eq_calculate(&self->equation);
-
-    Py_RETURN_TRUE;
+        Py_RETURN_TRUE;
+    }
+    
+    return NULL;
 }
 
 /*
