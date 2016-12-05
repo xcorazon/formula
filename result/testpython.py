@@ -13,7 +13,12 @@ c /= b + 3.5
 
 print c.toStarMath()
 
-d = formula.symbol("a") / (formula.number(2)/"b")
+d = formula.symbol("a") / ((formula.number(2)/"b") * "a") + "b"
+d.multipliersOut()
+print d.toStarMath()
+d.transform()
+d.calculate()
+d.transform()
 print d.toStarMath()
 
 print "EQ_COS = %d" % formula.EQ_COS
