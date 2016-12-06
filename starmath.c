@@ -118,12 +118,14 @@ void sm_mul(struct eq_node *node, int flags, wchar_t *result)
     wcscpy(result, sign);
     wcscat(result, open_bracket);
 
-    int ts_flags = SM_ROUND_BRACKET | FR_MUL;
-    child = (struct eq_node *)node->first_child;
-
+    int ts_flags = SM_DEFAULT;
+    if(eq_children_count(node)>1)
+        ts_flags |= SM_ROUND_BRACKET | FR_MUL;
+      
     wchar_t *ndot = L"";
     wchar_t *ddot = L"";
 
+    child = (struct eq_node *)node->first_child;
     while(child != NULL) {
         if (child->type == EQ_RECIPROCAL) {
             wcscat(denom, ddot);
