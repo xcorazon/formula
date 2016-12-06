@@ -200,9 +200,12 @@ int eq_equals(struct eq_node *eq1, struct eq_node *eq2, int absolute)
     
     if(eq_is_leaf(eq1)) {
       
-        if(eq1->type == EQ_NUMBER && ((struct eq_leaf *)eq1)->value == ((struct eq_leaf *)eq2)->value)
-            return true;
-        else if(wcscmp(((struct eq_leaf *)eq1)->name, ((struct eq_leaf *)eq2)->name) == 0)
+        if(eq1->type == EQ_NUMBER) {
+            if(((struct eq_leaf *)eq1)->value == ((struct eq_leaf *)eq2)->value)
+                return true;
+            else
+                return false;
+        } else if(wcscmp(((struct eq_leaf *)eq1)->name, ((struct eq_leaf *)eq2)->name) == 0)
             return true;
     } else {
       
