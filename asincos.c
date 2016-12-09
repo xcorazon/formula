@@ -44,6 +44,8 @@ void eq_transform_asin(void **node)
   if(child->type == EQ_SIN) {
     struct eq_node *angle = child->first_child;
     angle->sign *= child->sign;
+    
+    child->first_child = NULL;
     angle->next = eq_delete(*node);
     *node = angle;
   }
